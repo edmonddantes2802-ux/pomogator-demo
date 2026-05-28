@@ -1,0 +1,2572 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Помогатор · визуальное демо UX v0.1</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:#1D4ED8; --primary2:#2563EB; --accent:#EA580C;
+    --success:#16A34A; --warning:#F59E0B; --danger:#DC2626;
+    --bg:#F8FAFC; --card:#FFFFFF; --text:#0F172A; --mute:#64748B; --border:#E2E8F0;
+  }
+  html,body{font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif;color:#0F172A;background:#0F172A;}
+  .tnums{font-variant-numeric:tabular-nums;}
+
+  /* Рамка телефона */
+  .phone{
+    width:390px;height:844px;border-radius:42px;background:#111;padding:12px;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.6),0 0 0 2px #2a2a2a inset;
+    position:relative;flex-shrink:0;
+  }
+  .phone::before{
+    content:"";position:absolute;top:18px;left:50%;transform:translateX(-50%);
+    width:110px;height:28px;background:#000;border-radius:20px;z-index:30;
+  }
+  .phone-screen{
+    width:100%;height:100%;border-radius:32px;background:#F8FAFC;overflow:hidden;
+    position:relative;display:flex;flex-direction:column;
+  }
+  .phone-status{height:44px;display:flex;align-items:flex-end;justify-content:space-between;
+    padding:0 28px 6px;font-size:13px;font-weight:600;color:#0F172A;}
+  .phone-content{flex:1;overflow:auto;padding-bottom:88px;}
+  .phone-tabs{
+    position:absolute;left:0;right:0;bottom:0;height:84px;background:#fff;
+    border-top:1px solid #E2E8F0;display:flex;padding-bottom:18px;
+  }
+  .phone-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10px;color:#64748B;}
+  .phone-tab.active{color:#1D4ED8;}
+  .phone-tab svg{width:22px;height:22px;}
+
+  /* Рамка ПК */
+  .desktop{
+    width:1280px;height:800px;border-radius:14px;background:#1a1a1a;padding:0;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.6);
+    transform:scale(.6);transform-origin:top left;flex-shrink:0;
+  }
+  .desktop-wrap{width:768px;height:480px;}/* visible 60% */
+  .desktop-bar{height:32px;background:#2a2a2a;border-radius:14px 14px 0 0;display:flex;align-items:center;padding:0 12px;gap:6px;}
+  .desktop-bar i{width:12px;height:12px;border-radius:50%;display:block;}
+  .desktop-screen{width:100%;height:768px;background:#F8FAFC;overflow:hidden;display:flex;}
+
+  /* Sidebar PC */
+  .pc-sidebar{width:240px;background:#fff;border-right:1px solid #E2E8F0;display:flex;flex-direction:column;flex-shrink:0;}
+  .pc-sidebar .logo{padding:14px 18px;font-weight:700;display:flex;align-items:center;gap:8px;border-bottom:1px solid #E2E8F0;}
+  .pc-nav{padding:8px;flex:1;display:flex;flex-direction:column;gap:2px;}
+  .pc-nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:13px;color:#0F172A;cursor:default;}
+  .pc-nav-item:hover{background:#F1F5F9;}
+  .pc-nav-item.active{background:#EFF6FF;color:#1D4ED8;font-weight:600;}
+  .pc-nav-item svg{width:18px;height:18px;}
+  .pc-nav .sep{height:1px;background:#E2E8F0;margin:6px 4px;}
+  .pc-side-banner{margin:8px;padding:10px;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-radius:10px;font-size:12px;}
+
+  /* Topbar PC */
+  .pc-topbar{height:56px;background:#fff;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;padding:0 16px;gap:12px;}
+  .pc-content{flex:1;overflow:auto;}
+
+  /* Generic ui */
+  .pill{font-size:11px;padding:2px 8px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:8px;font-weight:600;font-size:13px;cursor:default;}
+  .btn-pri{background:#1D4ED8;color:#fff;}
+  .btn-accent{background:#EA580C;color:#fff;}
+  .btn-out{background:#fff;color:#0F172A;border:1px solid #E2E8F0;}
+  .btn-ghost{color:#1D4ED8;}
+  .card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;}
+  .input{height:36px;border:1px solid #E2E8F0;border-radius:8px;padding:0 10px;font-size:13px;background:#fff;display:flex;align-items:center;width:100%;color:#0F172A;}
+  .input-lg{height:48px;font-size:15px;}
+  .label{font-size:12px;color:#64748B;font-weight:500;margin-bottom:4px;display:block;}
+
+  .sev-attn{color:#F59E0B;}
+  .sev-susp{color:#DC2626;}
+  .sev-norm{color:#94A3B8;}
+
+  /* Page chrome */
+  .pageWrap{background:#0F172A;color:#E2E8F0;padding:32px;min-height:100vh;}
+  .topinfo{max-width:1100px;margin:0 auto 24px;}
+  .topinfo h1{font-size:28px;font-weight:700;color:#fff;}
+  .topinfo p{color:#94A3B8;margin-top:6px;font-size:14px;}
+  .legend{display:flex;gap:18px;margin-top:14px;font-size:12px;color:#94A3B8;}
+  .legend b{color:#fff;}
+
+  .layout{display:grid;grid-template-columns:220px 1fr;gap:24px;max-width:1700px;margin:0 auto;}
+  .sidenav{position:sticky;top:24px;align-self:start;background:#1E293B;border-radius:14px;padding:14px;}
+  .sidenav h3{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#94A3B8;margin-bottom:10px;}
+  .sidenav a{display:block;padding:8px 10px;border-radius:8px;color:#CBD5E1;font-size:13px;text-decoration:none;}
+  .sidenav a:hover{background:#334155;color:#fff;}
+
+  .screen{background:#0B1220;border:1px solid #1E293B;border-radius:18px;padding:28px;margin-bottom:32px;}
+  .screen h2{font-size:20px;font-weight:700;color:#fff;}
+  .screen .desc{color:#94A3B8;font-size:13px;margin-top:6px;max-width:900px;}
+  .pair{display:flex;gap:32px;align-items:flex-start;margin-top:24px;flex-wrap:wrap;}
+  .frame-label{font-size:11px;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+  .frame-block{display:flex;flex-direction:column;}
+
+  /* Severity dots */
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+
+  /* Bottom sticky CTA in phone */
+  .m-cta{position:sticky;bottom:0;background:#fff;border-top:1px solid #E2E8F0;padding:12px 16px;}
+
+  /* Misc icons via emojis fallback */
+  .em{display:inline-block;width:18px;text-align:center;}
+
+  /* Wizard dots */
+  .wd{display:flex;gap:6px;align-items:center;}
+  .wd i{width:24px;height:6px;border-radius:3px;background:#E2E8F0;display:block;}
+  .wd i.on{background:#1D4ED8;}
+
+  /* Photo placeholder */
+  .ph{background:linear-gradient(135deg,#E0E7FF,#FCE7F3);display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:11px;}
+
+  /* Tariff cards */
+  .tcard{border:1px solid #E2E8F0;border-radius:12px;padding:14px;background:#fff;}
+  .tcard.featured{border-color:#1D4ED8;box-shadow:0 0 0 2px #DBEAFE;}
+
+  /* Signature canvas placeholder */
+  .sig{height:120px;background:#F8FAFC;border:1px dashed #CBD5E1;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:12px;}
+
+  /* Tab bar on PC for shift */
+  .tabs-pc{display:flex;gap:6px;}
+  .tabs-pc .t{padding:6px 12px;border-radius:8px;font-size:13px;background:#F1F5F9;color:#0F172A;}
+  .tabs-pc .t.on{background:#1D4ED8;color:#fff;}
+
+  /* Severity row */
+  .ev-row{display:flex;gap:10px;padding:10px;border-bottom:1px solid #F1F5F9;font-size:12px;align-items:flex-start;}
+  .ev-row:last-child{border-bottom:0;}
+
+  /* Permission checkbox style */
+  .check{display:flex;align-items:center;gap:8px;font-size:13px;padding:4px 0;}
+  .check input{accent-color:#1D4ED8;}
+</style>
+</head>
+<body>
+<div class="pageWrap">
+
+  <div class="topinfo">
+    <h1>Помогатор — визуальное демо UX <span style="color:#64748B;font-weight:400;font-size:16px;">v0.1 · 2026-05-24</span></h1>
+    <p>Слева — экран на смартфоне (390 × 844). Справа — экран на ПК (1280 × 800, масштаб 60% — поэтому помещается на странице). Это статичные мокапы, не интерактив. Прокрути по вертикали — каждый раздел показывает обе платформы рядом.</p>
+    <div class="legend">
+      <span><b style="color:#1D4ED8;">●</b> primary #1D4ED8</span>
+      <span><b style="color:#EA580C;">●</b> accent CTA #EA580C</span>
+      <span><b style="color:#F59E0B;">●</b> attention в журнале</span>
+      <span><b style="color:#DC2626;">●</b> suspicious / danger</span>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- SIDENAV -->
+    <nav class="sidenav">
+      <h3>Экраны</h3>
+      <a href="#login">1. Вход</a>
+      <a href="#onboard">2. Онбординг</a>
+      <a href="#dash">3. Дашборд</a>
+      <a href="#cash">4. Касса · приём</a>
+      <a href="#item">5. Карточка товара</a>
+      <a href="#items">6. Магазин (наше)</a>
+      <a href="#client">7. Карточка клиента</a>
+      <a href="#pawn">8. Залог</a>
+      <a href="#pawn-to-shop">8b. Залог → Магазин</a>
+      <a href="#shift">9. Закрытие смены</a>
+      <a href="#audit">10. Журнал</a>
+      <a href="#roles">11. Роли</a>
+      <a href="#tariff">12. Тарифы</a>
+      <a href="#client-portal">13. Кабинет клиента</a>
+      <a href="#settings">14. Настройки</a>
+    </nav>
+
+    <div>
+
+<!-- ============ 1. LOGIN ============ -->
+<section class="screen" id="login">
+  <h2>1. Вход и регистрация</h2>
+  <p class="desc">Точка входа. Owner регистрирует workspace или сотрудник принимает приглашение. Минимум полей, поддержка SMS-кода для приёмщиков без email.</p>
+  <div class="pair">
+
+    <!-- PHONE -->
+    <div class="frame-block">
+      <div class="frame-label">Смартфон · 390 × 844</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G  100%</span></div>
+        <div class="phone-content" style="padding:24px 20px;">
+          <div style="text-align:center;margin-top:40px;">
+            <div style="font-size:26px;font-weight:700;color:#1D4ED8;">◢ Помогатор</div>
+            <div style="font-size:13px;color:#64748B;margin-top:4px;">Всё под рукой — приём, продажа, склад</div>
+          </div>
+          <div style="margin-top:48px;">
+            <label class="label">Email</label>
+            <div class="input input-lg" style="color:#94A3B8;">you@example.com</div>
+            <div style="display:flex;justify-content:space-between;margin-top:14px;">
+              <label class="label">Пароль</label>
+              <a class="text-xs text-blue-700">забыл?</a>
+            </div>
+            <div class="input input-lg">••••••••</div>
+            <div class="btn btn-pri" style="width:100%;height:52px;margin-top:18px;font-size:15px;">Войти →</div>
+            <div style="display:flex;align-items:center;gap:8px;margin:20px 0;color:#94A3B8;font-size:12px;">
+              <div style="flex:1;height:1px;background:#E2E8F0;"></div>или<div style="flex:1;height:1px;background:#E2E8F0;"></div>
+            </div>
+            <div class="btn btn-out" style="width:100%;height:48px;">✉ Прислать ссылку на почту</div>
+          </div>
+          <div style="margin-top:36px;text-align:center;font-size:13px;color:#64748B;">
+            Нет аккаунта?<br><a class="text-blue-700 font-semibold">Завести проект</a>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- DESKTOP -->
+    <div class="frame-block">
+      <div class="frame-label">ПК · 1280 × 800 (масштаб 60%)</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen" style="display:flex;align-items:center;justify-content:center;">
+          <div style="width:420px;">
+            <div style="text-align:center;">
+              <div style="font-size:32px;font-weight:700;color:#1D4ED8;">◢ Помогатор</div>
+              <div style="color:#64748B;font-size:14px;margin-top:4px;">Всё под рукой — приём, продажа, склад</div>
+            </div>
+            <div class="card" style="padding:28px;margin-top:24px;">
+              <div style="font-size:20px;font-weight:700;">Войти</div>
+              <div style="margin-top:18px;">
+                <label class="label">Email</label>
+                <div class="input" style="color:#94A3B8;">you@example.com</div>
+              </div>
+              <div style="margin-top:14px;">
+                <div style="display:flex;justify-content:space-between;"><label class="label">Пароль</label><a class="text-xs text-blue-700">забыл?</a></div>
+                <div class="input">••••••••</div>
+              </div>
+              <div class="btn btn-pri" style="width:100%;margin-top:18px;">Войти →</div>
+              <div style="text-align:center;font-size:12px;color:#94A3B8;margin:14px 0;">— или —</div>
+              <div class="btn btn-out" style="width:100%;">✉ Прислать ссылку на почту</div>
+              <div style="text-align:center;font-size:13px;color:#64748B;margin-top:18px;">
+                Нет аккаунта? <a class="text-blue-700 font-semibold">Завести проект</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 2. ONBOARDING ============ -->
+<section class="screen" id="onboard">
+  <h2>2. Онбординг · шаг «О бизнесе»</h2>
+  <p class="desc">5-шаговый wizard: тип бизнеса → филиал → тариф → команда → готово. Цель — за 3 минуты получить рабочий workspace. Выбор «Ломбард» включает раздел «Залоги».</p>
+  <div class="pair">
+
+    <div class="frame-block">
+      <div class="frame-label">Смартфон</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;gap:10px;"><span style="color:#1D4ED8;">←</span><b>Помогатор</b></div>
+          <div class="wd"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="phone-content" style="padding:18px 16px;">
+          <div style="font-size:20px;font-weight:700;">Соберите свой Помогатор</div>
+          <div style="color:#64748B;font-size:13px;margin-top:4px;">Включите модули, которые нужны. Потом можно докупить.</div>
+
+          <div style="margin-top:18px;font-size:13px;font-weight:600;">Модули</div>
+
+          <label class="check card" style="padding:12px;margin-top:8px;border-color:#1D4ED8;background:#EFF6FF;">
+            <input type="checkbox" checked>
+            <span style="font-size:22px;margin-right:6px;">🛒</span>
+            <div><div style="font-weight:600;color:#1D4ED8;">Комиссионка / Скупка</div><div style="font-size:11px;color:#64748B;">приём б/у, продажа с витрины</div></div>
+          </label>
+          <label class="check card" style="padding:12px;margin-top:8px;border-color:#1D4ED8;background:#EFF6FF;">
+            <input type="checkbox" checked>
+            <span style="font-size:22px;margin-right:6px;">💰</span>
+            <div><div style="font-weight:600;color:#1D4ED8;">Ломбард</div><div style="font-size:11px;color:#64748B;">займы под залог, проценты</div></div>
+          </label>
+
+          <div style="margin-top:14px;font-size:12px;color:#64748B;font-weight:600;text-transform:uppercase;">В следующих обновлениях</div>
+          <label class="check card" style="padding:12px;margin-top:8px;opacity:.55;">
+            <input type="checkbox" disabled>
+            <span style="font-size:22px;margin-right:6px;">📦</span>
+            <div><div style="font-weight:600;">Склад / ответ. хранение</div><div style="font-size:11px;color:#64748B;">скоро</div></div>
+          </label>
+          <label class="check card" style="padding:12px;margin-top:8px;opacity:.55;">
+            <input type="checkbox" disabled>
+            <span style="font-size:22px;margin-right:6px;">🔧</span>
+            <div><div style="font-weight:600;">Автозапчасти</div><div style="font-size:11px;color:#64748B;">скоро</div></div>
+          </label>
+          <label class="check card" style="padding:12px;margin-top:8px;opacity:.55;">
+            <input type="checkbox" disabled>
+            <span style="font-size:22px;margin-right:6px;">✏</span>
+            <div><div style="font-weight:600;">Канцтовары / розница</div><div style="font-size:11px;color:#64748B;">скоро</div></div>
+          </label>
+
+          <div style="margin-top:18px;">
+            <label class="label">Название проекта (видят клиенты в чеках)*</label>
+            <div class="input input-lg">Тех Золото 24</div>
+          </div>
+          <div style="margin-top:14px;">
+            <label class="label">ИНН (можно потом)</label>
+            <div class="input input-lg" style="justify-content:space-between;">027812345678<span style="color:#1D4ED8;">↻</span></div>
+            <div style="font-size:12px;color:#64748B;margin-top:6px;">ИП Гордонов А. С., ОГРНИП 321027600234567</div>
+          </div>
+        </div>
+        <div class="m-cta"><div class="btn btn-pri" style="width:100%;height:48px;">Дальше →</div></div>
+      </div></div>
+    </div>
+
+    <div class="frame-block">
+      <div class="frame-label">ПК</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen">
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="pc-topbar" style="justify-content:space-between;">
+              <div style="display:flex;gap:8px;align-items:center;"><b style="color:#1D4ED8;">◢ Помогатор</b></div>
+              <div style="display:flex;gap:12px;align-items:center;">
+                <div class="wd"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+                <span style="font-size:12px;color:#64748B;">Шаг 1 из 5</span>
+                <a class="text-xs text-slate-500">Выйти</a>
+              </div>
+            </div>
+            <div class="pc-content" style="padding:32px 48px;background:#F8FAFC;">
+              <div style="max-width:820px;">
+                <div style="font-size:24px;font-weight:700;">Соберите свой Помогатор</div>
+                <div style="color:#64748B;margin-top:6px;">Помогатор — конструктор. Включите модули, которые нужны сейчас. Остальное докупите позже без переустановки.</div>
+
+                <div style="margin-top:24px;font-weight:600;">Доступные модули</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+                  <label class="card" style="padding:16px;display:flex;gap:12px;align-items:center;cursor:pointer;border-color:#1D4ED8;background:#EFF6FF;">
+                    <input type="checkbox" checked style="width:18px;height:18px;accent-color:#1D4ED8;">
+                    <div style="font-size:28px;">🛒</div>
+                    <div><div style="font-weight:600;color:#1D4ED8;">Комиссионка / Скупка</div><div style="font-size:12px;color:#64748B;">приём б/у-товара, оценка, продажа с витрины</div></div>
+                  </label>
+                  <label class="card" style="padding:16px;display:flex;gap:12px;align-items:center;cursor:pointer;border-color:#1D4ED8;background:#EFF6FF;">
+                    <input type="checkbox" checked style="width:18px;height:18px;accent-color:#1D4ED8;">
+                    <div style="font-size:28px;">💰</div>
+                    <div><div style="font-weight:600;color:#1D4ED8;">Ломбард</div><div style="font-size:12px;color:#64748B;">займы под залог, проценты, выкуп, продление</div></div>
+                  </label>
+                </div>
+
+                <div style="margin-top:20px;font-size:12px;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:.05em;">В следующих обновлениях</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px;">
+                  <div class="card" style="padding:14px;text-align:center;opacity:.55;"><div style="font-size:24px;">📦</div><div style="font-weight:600;margin-top:4px;">Склад</div><div style="font-size:11px;color:#64748B;">ответ. хранение</div></div>
+                  <div class="card" style="padding:14px;text-align:center;opacity:.55;"><div style="font-size:24px;">🔧</div><div style="font-weight:600;margin-top:4px;">Автозапчасти</div><div style="font-size:11px;color:#64748B;">VIN, артикулы</div></div>
+                  <div class="card" style="padding:14px;text-align:center;opacity:.55;"><div style="font-size:24px;">✏</div><div style="font-weight:600;margin-top:4px;">Канцтовары</div><div style="font-size:11px;color:#64748B;">розница с кассой</div></div>
+                </div>
+                <div style="font-size:12px;color:#64748B;margin-top:6px;">…а также прокат, мини-склад, ремонтная мастерская — по дорожной карте.</div>
+
+                <div style="margin-top:24px;">
+                  <label class="label">Название проекта (видят клиенты в чеках)*</label>
+                  <div class="input">Тех Золото 24</div>
+                </div>
+
+                <div style="margin-top:18px;display:grid;grid-template-columns:200px 1fr;gap:14px;align-items:end;">
+                  <div><label class="label">ИНН</label><div class="input">027812345678</div></div>
+                  <div style="padding-bottom:8px;font-size:13px;color:#16A34A;">✓ ИП Гордонов А. С.</div>
+                </div>
+
+                <div style="display:flex;justify-content:space-between;margin-top:24px;">
+                  <div class="btn btn-out">Назад</div>
+                  <div class="btn btn-pri">Дальше →</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 3. DASHBOARD ============ -->
+<section class="screen" id="dash">
+  <h2>3. Дашборд</h2>
+  <p class="desc">Обзорный экран для Owner / Admin. Приёмщик сюда не попадает — он сразу в Кассе. KPI-карточки, события «нужно внимание», истекающие залоги, открытые смены.</p>
+  <div class="pair">
+
+    <div class="frame-block">
+      <div class="frame-label">Смартфон</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G</span></div>
+        <!-- top header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#fff;border-bottom:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;gap:10px;"><span>☰</span><b style="font-size:14px;">Тех Золото 24 ▾</b></div>
+          <div style="display:flex;gap:10px;align-items:center;font-size:13px;">
+            <span style="position:relative;">🔔<span style="position:absolute;top:-4px;right:-6px;background:#DC2626;color:#fff;border-radius:999px;font-size:9px;padding:1px 4px;">3</span></span>
+            <span style="width:28px;height:28px;border-radius:50%;background:#1D4ED8;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">ИР</span>
+          </div>
+        </div>
+        <div class="phone-content" style="padding:14px 16px;">
+          <div style="font-size:13px;color:#64748B;">Сегодня · 24 мая · Главный филиал ▾</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
+            <div class="card" style="padding:12px;"><div style="font-size:11px;color:#64748B;">Выручка</div><div style="font-size:18px;font-weight:700;" class="tnums">142 580 ₽</div><div style="font-size:11px;color:#16A34A;">↑ +12%</div></div>
+            <div class="card" style="padding:12px;"><div style="font-size:11px;color:#64748B;">Принято</div><div style="font-size:18px;font-weight:700;" class="tnums">23 шт</div><div style="font-size:11px;color:#16A34A;">↑ +4</div></div>
+            <div class="card" style="padding:12px;"><div style="font-size:11px;color:#64748B;">Продано</div><div style="font-size:18px;font-weight:700;" class="tnums">17 шт</div><div style="font-size:11px;color:#64748B;">─ как вчера</div></div>
+            <div class="card" style="padding:12px;border-color:#FEF3C7;background:#FFFBEB;"><div style="font-size:11px;color:#64748B;">Залоги активные</div><div style="font-size:18px;font-weight:700;" class="tnums">86</div><div style="font-size:11px;color:#F59E0B;">⚠ 3 истекают</div></div>
+          </div>
+
+          <div style="margin-top:18px;display:flex;justify-content:space-between;align-items:center;">
+            <b style="font-size:14px;">Нужно внимание</b><a class="text-xs text-blue-700">всё →</a>
+          </div>
+          <div class="card" style="margin-top:8px;">
+            <div class="ev-row"><span class="sev-attn">⚠</span><div style="flex:1;"><div style="font-weight:600;">Скидка 23% на iPhone 13</div><div style="color:#64748B;">Анна К. → клиент Петров</div></div><div style="color:#94A3B8;">14:08</div></div>
+            <div class="ev-row"><span class="sev-attn">⚠</span><div style="flex:1;"><div style="font-weight:600;">Возврат после закр. смены</div><div style="color:#64748B;">Денис С. отменил #345</div></div><div style="color:#94A3B8;">11:42</div></div>
+            <div class="ev-row"><span class="sev-susp">●</span><div style="flex:1;"><div style="font-weight:600;">Расхождение кассы 480 ₽</div><div style="color:#64748B;">Закрытие смены #141</div></div><div style="color:#94A3B8;">09:15</div></div>
+          </div>
+
+          <div style="margin-top:18px;display:flex;justify-content:space-between;align-items:center;">
+            <b style="font-size:14px;">Истекают залоги</b><a class="text-xs text-blue-700">всё →</a>
+          </div>
+          <div class="card" style="margin-top:8px;padding:10px;font-size:12px;">
+            <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>26.05 · Иванова · iPhone 11</span><b class="tnums">8 400 ₽</b></div>
+            <div style="display:flex;justify-content:space-between;padding:4px 0;border-top:1px solid #F1F5F9;"><span>27.05 · Сидоров · Asus</span><b class="tnums">14 200 ₽</b></div>
+            <div style="display:flex;justify-content:space-between;padding:4px 0;border-top:1px solid #F1F5F9;"><span>28.05 · Петров · цепь 585</span><b class="tnums">5 600 ₽</b></div>
+          </div>
+        </div>
+        <!-- bottom tabs -->
+        <div class="phone-tabs">
+          <div class="phone-tab"><span style="font-size:18px;">⊞</span>Касса</div>
+          <div class="phone-tab"><span style="font-size:18px;">🏪</span>Магазин</div>
+          <div class="phone-tab"><span style="font-size:18px;">👤</span>Клиенты</div>
+          <div class="phone-tab"><span style="font-size:18px;">💰</span>Залоги</div>
+          <div class="phone-tab active"><span style="font-size:18px;">•••</span>Ещё</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="frame-block">
+      <div class="frame-label">ПК</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen">
+
+          <!-- sidebar -->
+          <aside class="pc-sidebar">
+            <div class="logo"><span style="color:#1D4ED8;">◢</span> Помогатор</div>
+            <div class="pc-nav">
+              <div class="pc-nav-item active">⊞ Дашборд</div>
+              <div class="pc-nav-item">🛒 Касса</div>
+              <div class="pc-nav-item">🏪 Магазин</div>
+              <div class="pc-nav-item">👤 Клиенты</div>
+              <div class="pc-nav-item">💰 Залоги</div>
+              <div class="pc-nav-item">📋 Смены</div>
+              <div class="pc-nav-item">📊 Журнал</div>
+              <div class="sep"></div>
+              <div class="pc-nav-item">👥 Сотрудники</div>
+              <div class="pc-nav-item">🏢 Филиалы</div>
+              <div class="pc-nav-item">⚙ Настройки</div>
+              <div class="pc-nav-item">🌐 Витрина</div>
+              <div class="pc-nav-item">💳 Тариф</div>
+            </div>
+            <div class="pc-side-banner">
+              <div style="font-weight:700;">Demo</div>
+              <div style="color:#64748B;">осталось 38 дней</div>
+              <div class="btn btn-pri" style="width:100%;margin-top:6px;font-size:12px;padding:6px;">→ Перейти на Pro</div>
+            </div>
+          </aside>
+
+          <!-- main -->
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="pc-topbar">
+              <div class="input" style="flex:1;max-width:480px;background:#F1F5F9;border:0;">🔍 Поиск товара, клиента, договора... <span style="margin-left:auto;color:#94A3B8;font-size:11px;">Ctrl+K</span></div>
+              <div style="margin-left:auto;display:flex;align-items:center;gap:12px;font-size:13px;">
+                <span class="pill" style="background:#DCFCE7;color:#16A34A;"><span class="dot" style="background:#16A34A;"></span> Смена #142</span>
+                <span style="position:relative;">🔔<span style="position:absolute;top:-4px;right:-6px;background:#DC2626;color:#fff;border-radius:999px;font-size:9px;padding:1px 4px;">3</span></span>
+                <span style="width:30px;height:30px;border-radius:50%;background:#1D4ED8;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;">ИР</span>
+              </div>
+            </div>
+            <div class="pc-content" style="padding:24px;background:#F8FAFC;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="font-size:22px;font-weight:700;">Сегодня · 24 мая 2026</div>
+                <div class="btn btn-out">Главный филиал ▾</div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;">
+                <div class="card" style="padding:16px;"><div style="font-size:12px;color:#64748B;">Выручка</div><div style="font-size:24px;font-weight:700;" class="tnums">142 580 ₽</div><div style="font-size:12px;color:#16A34A;">↑ +12% к вчера</div></div>
+                <div class="card" style="padding:16px;"><div style="font-size:12px;color:#64748B;">Принято</div><div style="font-size:24px;font-weight:700;" class="tnums">23 шт</div><div style="font-size:12px;color:#16A34A;">↑ +4 шт</div></div>
+                <div class="card" style="padding:16px;"><div style="font-size:12px;color:#64748B;">Продано</div><div style="font-size:24px;font-weight:700;" class="tnums">17 шт</div><div style="font-size:12px;color:#94A3B8;">─ как вчера</div></div>
+                <div class="card" style="padding:16px;border-color:#FEF3C7;background:#FFFBEB;"><div style="font-size:12px;color:#64748B;">Залоги активные</div><div style="font-size:24px;font-weight:700;" class="tnums">86 / 122 000 ₽</div><div style="font-size:12px;color:#F59E0B;">⚠ 3 истекают</div></div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-top:14px;">
+                <div class="card" style="padding:16px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;"><b>Журнал — нужно внимание</b><a class="text-xs text-blue-700">все →</a></div>
+                  <div style="margin-top:10px;">
+                    <div class="ev-row"><span class="sev-attn">⚠</span><div style="flex:1;"><div><b>Скидка 23% на iPhone 13</b></div><div style="color:#64748B;">Анна К. → клиент Петров</div></div><div style="color:#94A3B8;">14:08</div></div>
+                    <div class="ev-row"><span class="sev-attn">⚠</span><div style="flex:1;"><div><b>Возврат после закрытия смены</b></div><div style="color:#64748B;">Денис С. отменил #345</div></div><div style="color:#94A3B8;">11:42</div></div>
+                    <div class="ev-row"><span class="sev-susp">●</span><div style="flex:1;"><div><b>Расхождение кассы 480 ₽</b></div><div style="color:#64748B;">Закрытие смены #141</div></div><div style="color:#94A3B8;">09:15</div></div>
+                  </div>
+                </div>
+                <div class="card" style="padding:16px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;"><b>Открытые смены</b><a class="text-xs text-blue-700">все →</a></div>
+                  <div style="margin-top:10px;">
+                    <div style="padding:8px 0;border-bottom:1px solid #F1F5F9;"><div><b>Главный · ИР</b> · с 09:02</div><div style="color:#64748B;font-size:12px;" class="tnums">142 580 ₽ в кассе</div></div>
+                    <div style="padding:8px 0;"><div><b>Точка №2 · Денис</b> · с 10:15</div><div style="color:#64748B;font-size:12px;" class="tnums">31 200 ₽ в кассе</div></div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+                <div class="card" style="padding:16px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;"><b>Истекают залоги (7 дн.)</b><a class="text-xs text-blue-700">все →</a></div>
+                  <div style="margin-top:10px;font-size:13px;">
+                    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F1F5F9;"><span>26.05 · Иванова · iPhone 11</span><b class="tnums">8 400 ₽</b></div>
+                    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F1F5F9;"><span>27.05 · Сидоров · Asus</span><b class="tnums">14 200 ₽</b></div>
+                    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F1F5F9;"><span>28.05 · Петров · цепь 585</span><b class="tnums">5 600 ₽</b></div>
+                    <div style="color:#64748B;padding-top:6px;font-size:12px;">…ещё 4</div>
+                  </div>
+                </div>
+                <div class="card" style="padding:16px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;"><b>Топ товары за неделю</b><a class="text-xs text-blue-700">все →</a></div>
+                  <div style="margin-top:10px;font-size:13px;">
+                    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F1F5F9;"><span>1. iPhone 11/12</span><b>12 продаж</b></div>
+                    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F1F5F9;"><span>2. Цепи 585</span><b>9 продаж</b></div>
+                    <div style="display:flex;justify-content:space-between;padding:6px 0;"><span>3. PS4/PS5</span><b>7 продаж</b></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 4. CASH (RECEIVE) ============ -->
+<section class="screen" id="cash">
+  <h2>4. Касса · режим «Приём»</h2>
+  <p class="desc">Сценарий: приёмщик сканирует паспорт клиента (или вводит вручную на ПК) → распознанные данные → товар → сумма → ПЕРЕДАЁТ телефон клиенту → клиент видит свой экран: что сдаёт, сумма, [%-срок если залог], подпись → готово. Скан паспорта не сохраняется. Рыночная цена и коэффициенты — внутренняя кухня владельца, в момент сделки не показываются.</p>
+  <div class="pair">
+
+    <!-- PHONE: client view -->
+    <div class="frame-block">
+      <div class="frame-label">Смартфон · экран КЛИЕНТА (телефон в руках клиента)</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G</span></div>
+        <div style="padding:14px 16px 6px;text-align:center;border-bottom:1px solid #E2E8F0;background:#1D4ED8;color:#fff;">
+          <div style="font-size:11px;opacity:.8;">ПОДТВЕРЖДЕНИЕ СДЕЛКИ</div>
+          <div style="font-size:15px;font-weight:600;margin-top:2px;">Проверьте и распишитесь</div>
+        </div>
+        <div class="phone-content" style="padding:16px;">
+          <div style="font-size:13px;color:#64748B;">Вы сдаёте</div>
+          <div class="card" style="padding:12px;margin-top:6px;display:flex;gap:12px;align-items:center;">
+            <div class="ph" style="width:72px;height:72px;border-radius:8px;flex-shrink:0;font-size:10px;">📷 фото</div>
+            <div>
+              <div style="font-weight:700;font-size:15px;">iPhone 13 128GB</div>
+              <div style="font-size:12px;color:#64748B;">Midnight · хорошее</div>
+              <div style="font-size:12px;color:#64748B;margin-top:2px;">IMEI 35XXXXXXXXXX</div>
+            </div>
+          </div>
+
+          <div style="font-size:13px;color:#64748B;margin-top:14px;">Вы получаете</div>
+          <div class="card" style="padding:18px;margin-top:6px;text-align:center;border-color:#1D4ED8;background:#EFF6FF;">
+            <div style="font-size:42px;font-weight:700;color:#1D4ED8;" class="tnums">23 100 ₽</div>
+            <div style="font-size:12px;color:#64748B;margin-top:2px;">наличными сегодня</div>
+          </div>
+
+          <div style="font-size:13px;color:#64748B;margin-top:14px;">Покупатель</div>
+          <div class="card" style="padding:10px;margin-top:6px;font-size:12px;color:#475569;">
+            ИП Гордонов А. С.<br>
+            ОГРНИП 321027600234567<br>
+            Договор купли-продажи №1042 от 24.05.2026
+          </div>
+
+          <div style="font-size:13px;font-weight:600;margin-top:16px;">Ваша подпись</div>
+          <div class="sig" style="margin-top:6px;">распишитесь пальцем</div>
+          <div style="display:flex;justify-content:flex-end;margin-top:4px;"><a class="text-xs text-slate-500">стереть</a></div>
+        </div>
+        <div class="m-cta">
+          <div class="btn btn-accent" style="width:100%;height:52px;font-size:15px;">✓ Согласен — подтвердить</div>
+          <div style="text-align:center;font-size:11px;color:#94A3B8;margin-top:6px;">нажимая, вы соглашаетесь с условиями</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- DESKTOP: full receive screen -->
+    <div class="frame-block">
+      <div class="frame-label">ПК · всё в одном экране</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen">
+          <aside class="pc-sidebar">
+            <div class="logo"><span style="color:#1D4ED8;">◢</span> Помогатор</div>
+            <div class="pc-nav">
+              <div class="pc-nav-item">⊞ Дашборд</div>
+              <div class="pc-nav-item active">🛒 Касса</div>
+              <div class="pc-nav-item">🏪 Магазин</div>
+              <div class="pc-nav-item">👤 Клиенты</div>
+              <div class="pc-nav-item">💰 Залоги</div>
+              <div class="pc-nav-item">📋 Смены</div>
+              <div class="pc-nav-item">📊 Журнал</div>
+              <div class="sep"></div>
+              <div class="pc-nav-item">👥 Сотрудники</div>
+              <div class="pc-nav-item">🏢 Филиалы</div>
+              <div class="pc-nav-item">⚙ Настройки</div>
+            </div>
+          </aside>
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="pc-topbar">
+              <div class="input" style="flex:1;max-width:420px;background:#F1F5F9;border:0;">🔍 Поиск... <span style="margin-left:auto;color:#94A3B8;font-size:11px;">Ctrl+K</span></div>
+              <div style="margin-left:auto;display:flex;gap:12px;align-items:center;font-size:13px;">
+                <span class="pill" style="background:#DCFCE7;color:#16A34A;"><span class="dot" style="background:#16A34A;"></span> Смена #142</span>
+                <span>🔔</span>
+                <span style="width:30px;height:30px;border-radius:50%;background:#1D4ED8;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;">АК</span>
+              </div>
+            </div>
+            <div class="pc-content" style="padding:18px 24px;background:#F8FAFC;">
+              <div class="tabs-pc">
+                <div class="t on">● Приём <span style="opacity:.7;font-weight:400;">F1</span></div>
+                <div class="t">Продажа <span style="opacity:.5;">F2</span></div>
+                <div class="t">Залог <span style="opacity:.5;">F3</span></div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+                <!-- Client -->
+                <div class="card" style="padding:14px;">
+                  <div style="font-weight:700;">Клиент</div>
+                  <div style="display:flex;gap:6px;margin-top:8px;">
+                    <div class="btn btn-out" style="flex:1;font-size:12px;padding:6px;background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8;">📷 Скан паспорта</div>
+                    <div class="btn btn-out" style="flex:1;font-size:12px;padding:6px;">✏ Ввести вручную</div>
+                  </div>
+                  <label class="label" style="margin-top:10px;">Или найти в базе по email/телефону</label>
+                  <div class="input">petrov@mail.ru 🔍</div>
+                  <div class="card" style="margin-top:10px;padding:10px;background:#EFF6FF;border-color:#BFDBFE;">
+                    <div style="display:flex;justify-content:space-between;"><b>Петров Иван Сергеевич</b><span class="pill" style="background:#DBEAFE;color:#1D4ED8;">постоянный</span></div>
+                    <div style="font-size:12px;color:#64748B;margin-top:4px;">паспорт ✓ · 12 сделок · подгрузим в договор</div>
+                  </div>
+                  <div style="font-size:11px;color:#94A3B8;margin-top:8px;">🔒 Скан паспорта не сохраняется, только распознанные поля.</div>
+                </div>
+                <!-- Item -->
+                <div class="card" style="padding:14px;">
+                  <div style="font-weight:700;">Товар <span style="font-weight:400;font-size:11px;color:#94A3B8;">(интерфейс аналогичен админке Tehno-Zoloto)</span></div>
+                  <div style="display:flex;gap:6px;margin-top:8px;">
+                    <div class="btn btn-out" style="flex:1;font-size:12px;padding:6px;">📷 Фото</div>
+                    <div class="btn btn-out" style="flex:1;font-size:12px;padding:6px;background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8;">🔗 Ссылка → парсер</div>
+                    <div class="btn btn-out" style="flex:1;font-size:12px;padding:6px;">✏ Вручную</div>
+                  </div>
+                  <label class="label" style="margin-top:10px;">Название</label>
+                  <div class="input">iPhone 13 128GB Midnight</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+                    <div><label class="label">Категория</label><div class="input">Смартфоны ▾</div></div>
+                    <div><label class="label">Состояние</label><div class="input">Хорошее ▾</div></div>
+                  </div>
+                  <label class="label" style="margin-top:10px;">Спецификация · автопарсер</label>
+                  <div style="font-size:12px;color:#475569;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:8px;">
+                    • IMEI: 35XXXXXXXXXX<br>• Память: 128 ГБ<br>• Цвет: Midnight · Год: 2021
+                  </div>
+                </div>
+              </div>
+
+              <!-- Деньги — простой блок, без рыночной/коэффициента -->
+              <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-top:14px;">
+                <div class="card" style="padding:16px;">
+                  <b>Сумма сделки</b>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px;align-items:end;">
+                    <div>
+                      <label class="label">Выплата клиенту</label>
+                      <div class="input" style="height:48px;font-size:20px;font-weight:700;color:#1D4ED8;">23 100 ₽</div>
+                    </div>
+                    <div>
+                      <label class="label">Цена на витрину <span style="color:#94A3B8;font-weight:400;">(опционально)</span></label>
+                      <div class="input">38 900 ₽</div>
+                    </div>
+                  </div>
+                  <div style="font-size:11px;color:#94A3B8;margin-top:8px;">Внутренние числа (рыночная, коэффициент, маржа) — не показываются клиенту. Аналитика по марже — в отчётах.</div>
+                </div>
+
+                <div class="card" style="padding:14px;background:#FFFBEB;border-color:#FEF3C7;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;"><b style="color:#B45309;">Только для режима «Залог» (F3)</b></div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+                    <div><label class="label">% в день</label><div class="input" style="background:#fff;">0.5 %</div></div>
+                    <div><label class="label">Срок</label><div class="input" style="background:#fff;">30 дней</div></div>
+                  </div>
+                  <div style="font-size:12px;color:#64748B;margin-top:8px;">К возврату через 30 дн.: <b style="color:#0F172A;" class="tnums">26 565 ₽</b></div>
+                  <div style="font-size:11px;color:#94A3B8;margin-top:6px;">Значения по умолчанию — из <a class="text-blue-700">⚙ Настройки → Залоги</a> (своя ставка/grace/политика выкупа на workspace).</div>
+                </div>
+              </div>
+
+              <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px;">
+                <div class="btn btn-out">Сохранить черновик</div>
+                <div class="btn btn-accent">→ Передать клиенту для подписи</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+  <!-- блок про 3 способа подписи + QR -->
+  <div style="margin-top:24px;background:#1E293B;border-radius:12px;padding:20px 24px;color:#CBD5E1;">
+    <div style="font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.05em;">Как клиент подписывает</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;">
+
+      <div style="background:#0F172A;border-radius:10px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#1D4ED8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">1</div>
+          <b style="color:#fff;">Заранее в кабинете</b>
+        </div>
+        <div style="font-size:12px;color:#94A3B8;margin-top:8px;line-height:1.5;">Клиент сам в кабинете (раздел 13) добавил паспортные данные — вручную или скан паспорта со своего телефона. При сделке приёмщику не нужно ничего собирать, только подпись. <b style="color:#16A34A;">Самый быстрый.</b></div>
+      </div>
+
+      <div style="background:#0F172A;border-radius:10px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#1D4ED8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">2</div>
+          <b style="color:#fff;">На месте, на телефоне приёмщика</b>
+        </div>
+        <div style="font-size:12px;color:#94A3B8;margin-top:8px;line-height:1.5;">Приёмщик сканит паспорт клиента (OCR, без хранения), показывает экран подписи на своём телефоне (см. mobile-мокап в этом разделе). Клиент расписывается пальцем на телефоне приёмщика.</div>
+      </div>
+
+      <div style="background:#0F172A;border-radius:10px;padding:16px;border:1px solid #1D4ED8;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#EA580C;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">3</div>
+          <b style="color:#fff;">QR на свой телефон <span style="font-weight:400;color:#EA580C;font-size:11px;">новое</span></b>
+        </div>
+        <div style="font-size:12px;color:#94A3B8;margin-top:8px;line-height:1.5;">Приёмщик жмёт «→ Передать клиенту», на экране ПК (или его телефона) — QR-код. Клиент сканит своим телефоном, у него в браузере открывается экран подписи, расписывается СВОИМ пальцем на СВОЁМ телефоне. <b style="color:#16A34A;">Чужой телефон в руки не даём — гигиена + клиент видит крупно на своём экране.</b></div>
+      </div>
+
+    </div>
+
+    <!-- мини-визуализация QR -->
+    <div style="margin-top:16px;background:#0F172A;border-radius:10px;padding:18px;display:flex;align-items:center;justify-content:center;gap:32px;">
+
+      <div style="text-align:center;">
+        <div style="font-size:11px;color:#94A3B8;text-transform:uppercase;margin-bottom:8px;">экран ПК приёмщика</div>
+        <div style="width:200px;background:#fff;border-radius:10px;padding:14px;color:#0F172A;">
+          <div style="font-size:11px;color:#64748B;">Договор #1042 готов</div>
+          <div style="font-weight:700;font-size:13px;margin-top:2px;">Передайте телефон клиенту для скана</div>
+          <div style="margin:12px auto 0;width:140px;height:140px;background:#0F172A;border-radius:6px;display:grid;grid-template-columns:repeat(8,1fr);gap:2px;padding:8px;">
+            <!-- псевдо-QR -->
+            <div style="background:#fff;"></div><div></div><div style="background:#fff;"></div><div style="background:#fff;"></div><div></div><div style="background:#fff;"></div><div></div><div style="background:#fff;"></div>
+            <div></div><div style="background:#fff;"></div><div></div><div style="background:#fff;"></div><div style="background:#fff;"></div><div></div><div style="background:#fff;"></div><div></div>
+            <div style="background:#fff;"></div><div></div><div style="background:#fff;"></div><div></div><div></div><div style="background:#fff;"></div><div style="background:#fff;"></div><div style="background:#fff;"></div>
+            <div></div><div style="background:#fff;"></div><div style="background:#fff;"></div><div style="background:#fff;"></div><div style="background:#fff;"></div><div></div><div></div><div style="background:#fff;"></div>
+            <div style="background:#fff;"></div><div style="background:#fff;"></div><div></div><div style="background:#fff;"></div><div></div><div style="background:#fff;"></div><div style="background:#fff;"></div><div></div>
+            <div></div><div style="background:#fff;"></div><div style="background:#fff;"></div><div></div><div style="background:#fff;"></div><div style="background:#fff;"></div><div></div><div style="background:#fff;"></div>
+            <div style="background:#fff;"></div><div></div><div></div><div style="background:#fff;"></div><div></div><div></div><div style="background:#fff;"></div><div></div>
+            <div></div><div style="background:#fff;"></div><div style="background:#fff;"></div><div></div><div style="background:#fff;"></div><div style="background:#fff;"></div><div></div><div style="background:#fff;"></div>
+          </div>
+          <div style="font-size:10px;color:#94A3B8;text-align:center;margin-top:8px;">или коротко: <b style="color:#1D4ED8;">pmg.app/s/X4F2</b></div>
+        </div>
+      </div>
+
+      <div style="color:#fff;font-size:32px;">→</div>
+
+      <div style="text-align:center;">
+        <div style="font-size:11px;color:#94A3B8;text-transform:uppercase;margin-bottom:8px;">телефон клиента</div>
+        <div style="width:160px;height:240px;border-radius:24px;background:#000;padding:8px;">
+          <div style="width:100%;height:100%;background:#F8FAFC;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;text-align:center;">
+            <div style="font-size:24px;">📷</div>
+            <div style="font-size:10px;color:#64748B;margin-top:6px;">отсканировано</div>
+            <div style="font-size:11px;color:#0F172A;font-weight:600;margin-top:8px;line-height:1.3;">iPhone 13<br>23 100 ₽</div>
+            <div style="background:#1D4ED8;color:#fff;font-size:9px;padding:6px 10px;border-radius:6px;margin-top:10px;">✓ Подписать</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="color:#fff;font-size:32px;">→</div>
+
+      <div style="text-align:center;">
+        <div style="font-size:11px;color:#94A3B8;text-transform:uppercase;margin-bottom:8px;">обратно у приёмщика</div>
+        <div style="width:200px;background:#fff;border-radius:10px;padding:14px;color:#0F172A;">
+          <div style="font-size:32px;color:#16A34A;">✓</div>
+          <div style="font-weight:700;font-size:13px;margin-top:6px;">Клиент подписал в 14:23</div>
+          <div style="font-size:11px;color:#64748B;margin-top:4px;">Подпись сохранена в договор #1042</div>
+          <div style="margin-top:10px;background:#16A34A;color:#fff;font-size:11px;padding:6px;border-radius:6px;">→ Распечатать и выдать деньги</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. ITEM CARD ============ -->
+<section class="screen" id="item">
+  <h2>5. Карточка товара</h2>
+  <p class="desc">Один товар. История событий (приём, скидки, публикация), быстрые действия (продать, на витрину, скидка), спецификация и фото.</p>
+  <div class="pair">
+
+    <div class="frame-block">
+      <div class="frame-label">Смартфон</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-bottom:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;gap:8px;"><span style="color:#1D4ED8;">←</span><b style="font-size:14px;">TZ-1042</b></div>
+          <span>⋮</span>
+        </div>
+        <div class="phone-content">
+          <div class="ph" style="height:280px;">[ фото iPhone 13 ]</div>
+          <div style="padding:14px;">
+            <div style="font-weight:700;font-size:16px;">iPhone 13 128GB Midnight</div>
+            <div style="font-size:12px;color:#64748B;margin-top:2px;">Хорошее · Смартфоны · принят 12.05</div>
+            <div style="display:flex;justify-content:space-between;align-items:end;margin-top:10px;">
+              <div><div style="font-size:11px;color:#64748B;">Цена</div><div style="font-size:24px;font-weight:700;" class="tnums">38 900 ₽</div></div>
+              <span class="pill" style="background:#DCFCE7;color:#16A34A;">На полке · 12 дн.</span>
+            </div>
+            <div style="font-size:12px;color:#64748B;margin-top:4px;">принят за 23 100 ₽ · маржа +15 800 ₽</div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;">
+              <div class="btn btn-accent" style="font-size:12px;padding:10px 6px;">🛒 Продать</div>
+              <div class="btn btn-out" style="font-size:12px;padding:10px 6px;">🌐 Витрина</div>
+              <div class="btn btn-out" style="font-size:12px;padding:10px 6px;">🏷 Скидка</div>
+            </div>
+
+            <div style="margin-top:18px;font-weight:600;font-size:13px;">Спецификация</div>
+            <div class="card" style="padding:10px;font-size:12px;margin-top:6px;">
+              IMEI: 35XXXXXXXXXX<br>Память: 128 ГБ<br>Цвет: Midnight · Год: 2021<br>Комплект: коробка, кабель
+            </div>
+
+            <div style="margin-top:18px;font-weight:600;font-size:13px;">История</div>
+            <div class="card" style="margin-top:6px;">
+              <div class="ev-row"><span class="sev-attn">⚠</span><div style="flex:1;"><b>Скидка 23%</b><br><span style="color:#64748B;">Анна К. · 38 900 → 30 000 ₽</span></div><span style="color:#94A3B8;">24.05</span></div>
+              <div class="ev-row"><span class="sev-norm">•</span><div style="flex:1;"><b>Опубликовано на витрине</b><br><span style="color:#64748B;">Денис С.</span></div><span style="color:#94A3B8;">16.05</span></div>
+              <div class="ev-row"><span class="sev-norm">•</span><div style="flex:1;"><b>Приём</b><br><span style="color:#64748B;">23 100 ₽ → Петров И. С.</span></div><span style="color:#94A3B8;">12.05</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-tabs">
+          <div class="phone-tab"><span>⊞</span>Касса</div>
+          <div class="phone-tab active"><span>🏪</span>Магазин</div>
+          <div class="phone-tab"><span>👤</span>Клиенты</div>
+          <div class="phone-tab"><span>💰</span>Залоги</div>
+          <div class="phone-tab"><span>•••</span>Ещё</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="frame-block">
+      <div class="frame-label">ПК</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen">
+          <aside class="pc-sidebar">
+            <div class="logo"><span style="color:#1D4ED8;">◢</span> Помогатор</div>
+            <div class="pc-nav">
+              <div class="pc-nav-item">⊞ Дашборд</div>
+              <div class="pc-nav-item">🛒 Касса</div>
+              <div class="pc-nav-item active">🏪 Магазин</div>
+              <div class="pc-nav-item">👤 Клиенты</div>
+              <div class="pc-nav-item">💰 Залоги</div>
+              <div class="pc-nav-item">📋 Смены</div>
+              <div class="pc-nav-item">📊 Журнал</div>
+            </div>
+          </aside>
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="pc-topbar">
+              <div style="font-size:13px;color:#64748B;">← Товары · <b style="color:#0F172A;">iPhone 13 128GB Midnight</b> · TZ-1042</div>
+              <div style="margin-left:auto;display:flex;gap:8px;"><div class="btn btn-out">✏ Редактировать</div><div class="btn btn-out" style="width:36px;">⋮</div></div>
+            </div>
+            <div class="pc-content" style="padding:20px 24px;background:#F8FAFC;">
+              <div style="display:grid;grid-template-columns:340px 1fr;gap:18px;">
+                <div>
+                  <div class="ph card" style="height:280px;">[ фото 1 ]</div>
+                  <div style="display:flex;gap:6px;margin-top:8px;">
+                    <div class="ph card" style="width:60px;height:60px;font-size:10px;">2</div>
+                    <div class="ph card" style="width:60px;height:60px;font-size:10px;">3</div>
+                    <div class="ph card" style="width:60px;height:60px;font-size:10px;">4</div>
+                    <div class="card" style="width:60px;height:60px;display:flex;align-items:center;justify-content:center;color:#94A3B8;">+</div>
+                  </div>
+
+                  <div class="card" style="padding:14px;margin-top:14px;">
+                    <b style="font-size:13px;">Спецификация</b><a class="text-xs text-blue-700" style="float:right;">✏</a>
+                    <div style="font-size:12px;color:#475569;margin-top:8px;">
+                      IMEI: 35XXXXXXXXXX<br>Память: 128 ГБ<br>Цвет: Midnight · Год: 2021<br>Комплект: коробка, кабель
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card" style="padding:16px;">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;">
+                      <div style="color:#64748B;">Статус</div><div><span class="pill" style="background:#DCFCE7;color:#16A34A;">На полке</span></div>
+                      <div style="color:#64748B;">Филиал</div><div>Главный</div>
+                      <div style="color:#64748B;">Категория</div><div>Смартфоны → Apple</div>
+                      <div style="color:#64748B;">Состояние</div><div>Хорошее</div>
+                      <div style="color:#64748B;">Принят</div><div>12.05.2026 (12 дн.)</div>
+                      <div style="color:#64748B;">Приёмщик</div><div>Анна К. → клиент Петров</div>
+                      <div style="color:#64748B;">Сумма приёма</div><div class="tnums">23 100 ₽</div>
+                      <div style="color:#64748B;">Цена продажи</div><div><b class="tnums">38 900 ₽</b> <a class="text-xs text-blue-700">✏</a></div>
+                      <div style="color:#64748B;">Маржа план</div><div style="color:#16A34A;" class="tnums">15 800 ₽ (40%)</div>
+                    </div>
+                  </div>
+
+                  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+                    <div class="btn btn-accent" style="padding:14px;">🛒 Продать</div>
+                    <div class="btn btn-out" style="padding:14px;">🌐 На витрину</div>
+                    <div class="btn btn-out" style="padding:14px;">🏷 Скидка</div>
+                  </div>
+
+                  <div class="card" style="margin-top:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;background:#EFF6FF;border-color:#BFDBFE;">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                      <input type="checkbox" checked style="width:18px;height:18px;accent-color:#1D4ED8;">
+                      <b style="color:#1D4ED8;">Показывать на публичной витрине</b>
+                    </div>
+                    <div style="margin-left:auto;font-size:12px;color:#64748B;">опубликовано на: <a class="text-blue-700 font-semibold">tehnozoloto.imryazapov.ru</a> · 1 240 просмотров</div>
+                  </div>
+
+                  <div class="card" style="margin-top:14px;">
+                    <div style="padding:12px 14px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;"><b>Полная история движений (6)</b><span style="font-size:11px;color:#94A3B8;">видна только сотрудникам</span></div>
+                    <div class="ev-row"><span class="sev-attn">⚠</span><div style="flex:1;"><b>Скидка 23%</b> · Анна К. · 38 900 → 30 000 ₽ · причина: «торг с клиентом»</div><span style="color:#94A3B8;">24.05 14:08</span></div>
+                    <div class="ev-row"><span class="sev-norm">•</span><div style="flex:1;"><b>Изменена цена</b> · Денис С. · 39 900 → 38 900 ₽ · «долго не уходит»</div><span style="color:#94A3B8;">20.05 09:30</span></div>
+                    <div class="ev-row"><span class="sev-norm">•</span><div style="flex:1;"><b>Опубликовано на витрине</b> · Денис С. · tehnozoloto.imryazapov.ru</div><span style="color:#94A3B8;">16.05 11:20</span></div>
+                    <div class="ev-row"><span class="sev-norm">•</span><div style="flex:1;"><b>Назначена категория</b> · Денис С. · Смартфоны → Apple</div><span style="color:#94A3B8;">13.05 09:14</span></div>
+                    <div class="ev-row"><span class="sev-norm">•</span><div style="flex:1;"><b>Принят</b> · Анна К. · 23 100 ₽ → <a class="text-blue-700">Петров И. С.</a> · договор купли-продажи #1042</div><span style="color:#94A3B8;">12.05 10:42</span></div>
+                    <div class="ev-row" style="background:#FFFBEB;"><span style="color:#94A3B8;">ⓘ</span><div style="flex:1;color:#475569;"><b>До приёма:</b> товар не был в залоге, не имел предыдущих движений в этом магазине. IMEI проверен по базе утерянных — чист.</div><span style="color:#94A3B8;">12.05 10:38</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 6. ITEMS LIST ============ -->
+<section class="screen" id="items">
+  <h2>6. Магазин <span style="color:#64748B;font-weight:400;font-size:14px;">(главный реестр товаров + витрина)</span></h2>
+  <p class="desc">Магазин — единственное место, где сотрудник видит ВСЁ про товары торговой точки: серийники / IMEI / артикулы, даты приёма, всю историю движений (включая периоды в залоге). Витрина — НЕ отдельный раздел, а РЕЖИМ просмотра того же Магазина: переключатель «Карточки сотрудника / Превью публичной витрины» сверху. Сам публичный сайт-витрина (шаблон Tehno-Zoloto и другие) — отдельная допуслуга поверх Помогатора: внутри Магазина галочкой «☑ Показывать на витрине» товар выдаётся через API внешнему сайту, который мы разворачиваем клиенту на поддомене / своём домене.</p>
+  <div class="pair">
+
+    <div class="frame-block">
+      <div class="frame-label">Смартфон</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-bottom:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;gap:8px;"><span>☰</span><b>Магазин</b><span style="font-size:11px;color:#94A3B8;">наше</span></div>
+          <span style="background:#1D4ED8;color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;">+</span>
+        </div>
+        <div class="phone-content" style="padding:12px 14px;">
+          <div style="display:flex;gap:4px;background:#F1F5F9;padding:3px;border-radius:8px;margin-bottom:10px;font-size:11px;">
+            <div style="flex:1;background:#fff;padding:6px;border-radius:6px;text-align:center;font-weight:600;">📋 Карточки</div>
+            <div style="flex:1;padding:6px;text-align:center;color:#64748B;">🌐 Витрина</div>
+            <div style="flex:1;padding:6px;text-align:center;color:#64748B;">📦 Архив</div>
+          </div>
+          <div class="input" style="background:#fff;">🔍 Название, IMEI, SKU</div>
+          <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
+            <span class="pill" style="background:#EFF6FF;color:#1D4ED8;">На полке ×</span>
+            <span class="pill" style="background:#EFF6FF;color:#1D4ED8;">Смартфоны ×</span>
+            <span class="pill" style="background:#F1F5F9;color:#64748B;">+ фильтр</span>
+          </div>
+          <div style="font-size:11px;color:#64748B;margin-top:10px;">342 шт · сортировка: новые ▾</div>
+
+          <div class="card" style="padding:10px;display:flex;gap:10px;margin-top:10px;">
+            <div class="ph" style="width:64px;height:64px;border-radius:8px;">фото</div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:13px;">iPhone 13 128GB</div>
+              <div style="font-size:11px;color:#64748B;">хорошее · 12 дн. · TZ-1042</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+                <b class="tnums">38 900 ₽</b>
+                <span class="pill" style="background:#DCFCE7;color:#16A34A;">На полке</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:10px;display:flex;gap:10px;margin-top:10px;">
+            <div class="ph" style="width:64px;height:64px;border-radius:8px;">фото</div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:13px;">Ноутбук ASUS X515</div>
+              <div style="font-size:11px;color:#64748B;">удовл. · 18 дн. · TZ-1041</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+                <b class="tnums">29 900 ₽</b>
+                <span class="pill" style="background:#DCFCE7;color:#16A34A;">На полке</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:10px;display:flex;gap:10px;margin-top:10px;">
+            <div class="ph" style="width:64px;height:64px;border-radius:8px;">фото</div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:13px;">Цепь 585 пр., 5.4 г</div>
+              <div style="font-size:11px;color:#64748B;">TZ-1040 · из залога #L0098</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+                <b class="tnums">21 000 ₽</b>
+                <span class="pill" style="background:#FEF3C7;color:#B45309;">Из залога · на полке</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:10px;display:flex;gap:10px;margin-top:10px;">
+            <div class="ph" style="width:64px;height:64px;border-radius:8px;">фото</div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:13px;">PS4 1TB</div>
+              <div style="font-size:11px;color:#64748B;">хорошее · 2 джойстика · TZ-1039</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+                <b class="tnums">17 500 ₽</b>
+                <span class="pill" style="background:#F1F5F9;color:#64748B;">Продано 23.05</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-tabs">
+          <div class="phone-tab"><span>⊞</span>Касса</div>
+          <div class="phone-tab active"><span>🏪</span>Магазин</div>
+          <div class="phone-tab"><span>👤</span>Клиенты</div>
+          <div class="phone-tab"><span>💰</span>Залоги</div>
+          <div class="phone-tab"><span>•••</span>Ещё</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="frame-block">
+      <div class="frame-label">ПК</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen">
+          <aside class="pc-sidebar">
+            <div class="logo"><span style="color:#1D4ED8;">◢</span> Помогатор</div>
+            <div class="pc-nav">
+              <div class="pc-nav-item">⊞ Дашборд</div>
+              <div class="pc-nav-item">🛒 Касса</div>
+              <div class="pc-nav-item active">🏪 Магазин</div>
+              <div class="pc-nav-item">👤 Клиенты</div>
+              <div class="pc-nav-item">💰 Залоги</div>
+              <div class="pc-nav-item">📋 Смены</div>
+              <div class="pc-nav-item">📊 Журнал</div>
+            </div>
+          </aside>
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="pc-topbar">
+              <div style="font-size:18px;font-weight:700;">Магазин <span style="font-size:12px;color:#94A3B8;font-weight:400;">наше имущество · 342 шт</span></div>
+              <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+                <a class="text-xs text-slate-500" style="text-decoration:underline;">→ перейти в Залоги (чужое)</a>
+                <div class="btn btn-accent">+ Добавить вручную</div>
+              </div>
+            </div>
+            <div style="padding:12px 24px 0;background:#F8FAFC;">
+              <div class="tabs-pc">
+                <div class="t on">📋 Карточки сотрудника</div>
+                <div class="t">🌐 Превью публичной витрины</div>
+                <div class="t">📦 Архив</div>
+                <div style="margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:#64748B;">опубликовано на витрине: <b style="color:#0F172A;">214 / 342</b></div>
+              </div>
+            </div>
+            <div class="pc-content" style="padding:14px 24px;background:#F8FAFC;">
+              <div class="input" style="background:#fff;">🔍 Поиск по названию, IMEI, SKU...</div>
+              <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap;">
+                <span class="pill" style="background:#fff;border:1px solid #E2E8F0;">Категория ▾</span>
+                <span class="pill" style="background:#fff;border:1px solid #E2E8F0;">Состояние ▾</span>
+                <span class="pill" style="background:#fff;border:1px solid #E2E8F0;">Статус ▾</span>
+                <span class="pill" style="background:#fff;border:1px solid #E2E8F0;">Филиал ▾</span>
+                <span class="pill" style="background:#EFF6FF;color:#1D4ED8;">Смартфоны ×</span>
+                <span class="pill" style="background:#EFF6FF;color:#1D4ED8;">На полке ×</span>
+                <a class="text-xs text-slate-500">сбросить</a>
+                <div style="margin-left:auto;font-size:12px;color:#64748B;">Найдено: 342 · показано 50 · сортировка: новые ▾</div>
+              </div>
+
+              <div class="card" style="margin-top:12px;overflow:hidden;">
+                <table style="width:100%;font-size:13px;">
+                  <thead style="background:#F8FAFC;color:#64748B;font-size:11px;text-transform:uppercase;">
+                    <tr>
+                      <th style="padding:10px;text-align:left;width:30px;"><input type="checkbox"></th>
+                      <th style="padding:10px;text-align:left;width:60px;">фото</th>
+                      <th style="padding:10px;text-align:left;">название</th>
+                      <th style="padding:10px;text-align:left;">SKU</th>
+                      <th style="padding:10px;text-align:right;">приём</th>
+                      <th style="padding:10px;text-align:right;">цена</th>
+                      <th style="padding:10px;text-align:left;">статус</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="border-top:1px solid #F1F5F9;">
+                      <td style="padding:10px;"><input type="checkbox"></td>
+                      <td style="padding:6px;"><div class="ph" style="width:44px;height:44px;border-radius:6px;font-size:9px;">📷</div></td>
+                      <td style="padding:10px;"><b>iPhone 13 128GB Midnight</b><div style="font-size:11px;color:#64748B;">IMEI 35XXX · хорошее</div></td>
+                      <td style="padding:10px;color:#64748B;">TZ-1042</td>
+                      <td style="padding:10px;text-align:right;" class="tnums">23 100 ₽</td>
+                      <td style="padding:10px;text-align:right;font-weight:700;" class="tnums">38 900 ₽</td>
+                      <td style="padding:10px;"><span class="pill" style="background:#DCFCE7;color:#16A34A;">На полке · 12 дн.</span></td>
+                      <td style="padding:10px;color:#94A3B8;">⋮</td>
+                    </tr>
+                    <tr style="border-top:1px solid #F1F5F9;">
+                      <td style="padding:10px;"><input type="checkbox" checked></td>
+                      <td style="padding:6px;"><div class="ph" style="width:44px;height:44px;border-radius:6px;font-size:9px;">📷</div></td>
+                      <td style="padding:10px;"><b>Ноутбук ASUS X515</b><div style="font-size:11px;color:#64748B;">8/512 · удовл.</div></td>
+                      <td style="padding:10px;color:#64748B;">TZ-1041</td>
+                      <td style="padding:10px;text-align:right;" class="tnums">18 500 ₽</td>
+                      <td style="padding:10px;text-align:right;font-weight:700;" class="tnums">29 900 ₽</td>
+                      <td style="padding:10px;"><span class="pill" style="background:#DCFCE7;color:#16A34A;">На полке · 18 дн.</span></td>
+                      <td style="padding:10px;color:#94A3B8;">⋮</td>
+                    </tr>
+                    <tr style="border-top:1px solid #F1F5F9;">
+                      <td style="padding:10px;"><input type="checkbox"></td>
+                      <td style="padding:6px;"><div class="ph" style="width:44px;height:44px;border-radius:6px;font-size:9px;">📷</div></td>
+                      <td style="padding:10px;"><b>Цепь 585 пр., 5.4 г</b><div style="font-size:11px;color:#B45309;">↳ из залога #L0098 (не выкупили 18.05)</div></td>
+                      <td style="padding:10px;color:#64748B;">TZ-1040</td>
+                      <td style="padding:10px;text-align:right;" class="tnums">16 200 ₽</td>
+                      <td style="padding:10px;text-align:right;font-weight:700;" class="tnums">21 000 ₽</td>
+                      <td style="padding:10px;"><span class="pill" style="background:#FEF3C7;color:#B45309;">Из залога · на полке</span></td>
+                      <td style="padding:10px;color:#94A3B8;">⋮</td>
+                    </tr>
+                    <tr style="border-top:1px solid #F1F5F9;">
+                      <td style="padding:10px;"><input type="checkbox"></td>
+                      <td style="padding:6px;"><div class="ph" style="width:44px;height:44px;border-radius:6px;font-size:9px;">📷</div></td>
+                      <td style="padding:10px;"><b>PlayStation 4 1TB</b><div style="font-size:11px;color:#64748B;">хорошее, 2 джойстика</div></td>
+                      <td style="padding:10px;color:#64748B;">TZ-1039</td>
+                      <td style="padding:10px;text-align:right;" class="tnums">9 000 ₽</td>
+                      <td style="padding:10px;text-align:right;font-weight:700;" class="tnums">17 500 ₽</td>
+                      <td style="padding:10px;"><span class="pill" style="background:#F1F5F9;color:#64748B;">Продано 23.05</span></td>
+                      <td style="padding:10px;color:#94A3B8;">⋮</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Bulk bar -->
+              <div class="card" style="margin-top:14px;padding:10px 14px;display:flex;align-items:center;gap:12px;background:#0F172A;color:#fff;border:0;">
+                <span style="font-size:13px;">Выбрано: <b>1</b></span>
+                <div style="margin-left:auto;display:flex;gap:8px;">
+                  <div class="btn btn-out" style="background:#1E293B;color:#fff;border-color:#334155;">Изменить цену</div>
+                  <div class="btn btn-out" style="background:#1E293B;color:#fff;border-color:#334155;">Сменить статус</div>
+                  <div class="btn btn-out" style="background:#1E293B;color:#fff;border-color:#334155;">Экспорт CSV</div>
+                  <div class="btn btn-out" style="background:#7F1D1D;color:#fff;border:0;">Удалить</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 7. CLIENT CARD ============ -->
+<section class="screen" id="client">
+  <h2>7. Карточка клиента</h2>
+  <p class="desc">Профиль клиента + история операций. Паспорт под 🔒 — расшифровка envelope-encryption на лету с записью в журнал (если >5 раз за смену — severity «suspicious»).</p>
+  <div class="pair">
+
+    <div class="frame-block">
+      <div class="frame-label">Смартфон</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-bottom:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;gap:8px;"><span style="color:#1D4ED8;">←</span><b style="font-size:14px;">Петров И. С.</b></div>
+          <span>⋮</span>
+        </div>
+        <div class="phone-content" style="padding:14px;">
+          <div style="display:flex;gap:12px;align-items:center;">
+            <div style="width:60px;height:60px;border-radius:50%;background:#1D4ED8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">ИП</div>
+            <div>
+              <b style="font-size:15px;">Петров Иван Серг.</b>
+              <div style="margin-top:2px;"><span class="pill" style="background:#DBEAFE;color:#1D4ED8;">постоянный</span></div>
+              <div style="font-size:12px;color:#64748B;margin-top:4px;">41 год · с 18.01.2025</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:14px;padding:10px;">
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F1F5F9;"><span style="color:#1D4ED8;">📞</span><b>+7 917 555-12-34</b></div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F1F5F9;"><span>✉</span> petrov@mail.ru</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F1F5F9;color:#64748B;">🔒 Паспорт</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;color:#64748B;">🔒 Адрес</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;">
+            <div class="card" style="padding:10px;"><div style="font-size:11px;color:#64748B;">сделок</div><div style="font-size:18px;font-weight:700;">12</div></div>
+            <div class="card" style="padding:10px;"><div style="font-size:11px;color:#64748B;">сумма</div><div style="font-size:18px;font-weight:700;" class="tnums">184 200 ₽</div></div>
+            <div class="card" style="padding:10px;"><div style="font-size:11px;color:#64748B;">покупки</div><div style="font-size:18px;font-weight:700;">8</div></div>
+            <div class="card" style="padding:10px;"><div style="font-size:11px;color:#64748B;">скупки</div><div style="font-size:18px;font-weight:700;">3</div></div>
+          </div>
+
+          <div class="btn btn-pri" style="width:100%;margin-top:14px;height:44px;">+ Новая операция</div>
+
+          <div style="margin-top:18px;display:flex;justify-content:space-between;align-items:center;">
+            <b style="font-size:13px;">История</b><a class="text-xs text-blue-700">все ▾</a>
+          </div>
+          <div class="card" style="margin-top:8px;">
+            <div class="ev-row"><div style="flex:1;"><b>Скупка · iPhone 13</b><div style="color:#64748B;">24.05 · #1042</div></div><b class="tnums">23 100 ₽</b></div>
+            <div class="ev-row"><div style="flex:1;"><b>Покупка · Lenovo IdeaPad</b><div style="color:#64748B;">18.04 · #0998</div></div><b class="tnums">24 500 ₽</b></div>
+            <div class="ev-row"><div style="flex:1;"><b>Залог · Цепь 585</b><div style="color:#64748B;">02.03 → закрыт 18.03 · #L0124</div></div><b class="tnums">8 400 ₽</b></div>
+          </div>
+        </div>
+        <div class="phone-tabs">
+          <div class="phone-tab"><span>⊞</span>Касса</div>
+          <div class="phone-tab"><span>🏪</span>Магазин</div>
+          <div class="phone-tab active"><span>👤</span>Клиенты</div>
+          <div class="phone-tab"><span>💰</span>Залоги</div>
+          <div class="phone-tab"><span>•••</span>Ещё</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="frame-block">
+      <div class="frame-label">ПК</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen">
+          <aside class="pc-sidebar">
+            <div class="logo"><span style="color:#1D4ED8;">◢</span> Помогатор</div>
+            <div class="pc-nav">
+              <div class="pc-nav-item">⊞ Дашборд</div>
+              <div class="pc-nav-item">🛒 Касса</div>
+              <div class="pc-nav-item">🏪 Магазин</div>
+              <div class="pc-nav-item active">👤 Клиенты</div>
+              <div class="pc-nav-item">💰 Залоги</div>
+              <div class="pc-nav-item">📋 Смены</div>
+              <div class="pc-nav-item">📊 Журнал</div>
+            </div>
+          </aside>
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="pc-topbar">
+              <div style="font-size:13px;color:#64748B;">← Клиенты · <b style="color:#0F172A;">Петров Иван Сергеевич</b></div>
+              <div style="margin-left:auto;display:flex;gap:8px;">
+                <div class="btn btn-out" style="background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8;">✉ Пригласить в кабинет</div>
+                <div class="btn btn-out">✏ Редактировать</div>
+                <div class="btn btn-out" style="width:36px;">⋮</div>
+              </div>
+            </div>
+            <div class="pc-content" style="padding:20px 24px;background:#F8FAFC;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="card" style="padding:16px;">
+                  <div style="display:flex;gap:14px;align-items:center;">
+                    <div style="width:64px;height:64px;border-radius:50%;background:#1D4ED8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;">ИП</div>
+                    <div>
+                      <b style="font-size:17px;">Петров Иван Сергеевич</b>
+                      <div style="margin-top:2px;"><span class="pill" style="background:#DBEAFE;color:#1D4ED8;">постоянный</span></div>
+                      <div style="font-size:12px;color:#64748B;margin-top:4px;">12.04.1985 (41 г.) · клиент с 18.01.2025</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card" style="padding:16px;">
+                  <div style="display:grid;grid-template-columns:120px 1fr;gap:6px;font-size:13px;">
+                    <div style="color:#64748B;">Тел.</div><div><b>+7 917 555-12-34</b></div>
+                    <div style="color:#64748B;">Email</div><div>petrov@mail.ru</div>
+                    <div style="color:#64748B;">Паспорт</div><div><a class="text-blue-700">🔒 показать (журналируется)</a></div>
+                    <div style="color:#64748B;">Адрес</div><div><a class="text-blue-700">🔒 показать</a></div>
+                    <div style="color:#64748B;">Согласие ПД</div><div style="color:#16A34A;">✓ 18.01.2025</div>
+                    <div style="color:#64748B;">Кабинет</div><div><span class="pill" style="background:#FEF3C7;color:#B45309;">не приглашён</span> <a class="text-xs text-blue-700">пригласить →</a></div>
+                    <div style="color:#64748B;">Чёрный список</div><div>☐</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px;">
+                <div class="card" style="padding:12px;text-align:center;"><div style="font-size:11px;color:#64748B;">сделок</div><div style="font-size:20px;font-weight:700;">12</div></div>
+                <div class="card" style="padding:12px;text-align:center;"><div style="font-size:11px;color:#64748B;">сумма</div><div style="font-size:20px;font-weight:700;" class="tnums">184k ₽</div></div>
+                <div class="card" style="padding:12px;text-align:center;"><div style="font-size:11px;color:#64748B;">покупки</div><div style="font-size:20px;font-weight:700;">8</div></div>
+                <div class="card" style="padding:12px;text-align:center;"><div style="font-size:11px;color:#64748B;">скупки</div><div style="font-size:20px;font-weight:700;">3</div></div>
+                <div class="card" style="padding:12px;text-align:center;"><div style="font-size:11px;color:#64748B;">залоги</div><div style="font-size:20px;font-weight:700;">1 закрыт</div></div>
+              </div>
+
+              <div class="card" style="margin-top:14px;">
+                <div style="padding:12px 14px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;"><b>История операций</b><span style="font-size:12px;color:#64748B;">фильтр: все ▾</span></div>
+                <table style="width:100%;font-size:13px;">
+                  <thead style="background:#F8FAFC;color:#64748B;font-size:11px;text-transform:uppercase;">
+                    <tr>
+                      <th style="padding:10px;text-align:left;">Дата</th>
+                      <th style="padding:10px;text-align:left;">Тип</th>
+                      <th style="padding:10px;text-align:left;">Что</th>
+                      <th style="padding:10px;text-align:right;">Сумма</th>
+                      <th style="padding:10px;text-align:left;">Договор</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="border-top:1px solid #F1F5F9;"><td style="padding:10px;">24.05</td><td style="padding:10px;"><span class="pill" style="background:#EFF6FF;color:#1D4ED8;">Скупка</span></td><td style="padding:10px;">iPhone 13 128GB</td><td style="padding:10px;text-align:right;" class="tnums">23 100 ₽</td><td style="padding:10px;color:#64748B;">#1042</td></tr>
+                    <tr style="border-top:1px solid #F1F5F9;"><td style="padding:10px;">18.04</td><td style="padding:10px;"><span class="pill" style="background:#FFF7ED;color:#EA580C;">Покупка</span></td><td style="padding:10px;">Ноутбук Lenovo IdeaPad</td><td style="padding:10px;text-align:right;" class="tnums">24 500 ₽</td><td style="padding:10px;color:#64748B;">#0998</td></tr>
+                    <tr style="border-top:1px solid #F1F5F9;"><td style="padding:10px;">02.03</td><td style="padding:10px;"><span class="pill" style="background:#F1F5F9;color:#64748B;">Залог закр.</span></td><td style="padding:10px;">Цепь 585 пр.</td><td style="padding:10px;text-align:right;" class="tnums">8 400 ₽</td><td style="padding:10px;color:#64748B;">#L0124</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 8. PAWN ============ -->
+<section class="screen" id="pawn">
+  <h2>8. Карточка залога</h2>
+  <p class="desc">Активный залог с обратным отсчётом срока. Долг считается в реальном времени из снапшотов pawn_calculations. Действия: выкуп, продление, на полку.</p>
+  <div class="pair">
+
+    <div class="frame-block">
+      <div class="frame-label">Смартфон</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-bottom:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;gap:8px;"><span style="color:#1D4ED8;">←</span><b>#L0142</b></div>
+          <span>⋮</span>
+        </div>
+        <div class="phone-content" style="padding:14px;">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-size:11px;">
+            <div class="card" style="padding:8px;text-align:center;"><div style="color:#64748B;">актив.</div><b style="font-size:14px;">86</b></div>
+            <div class="card" style="padding:8px;text-align:center;border-color:#FECACA;background:#FEF2F2;"><div style="color:#DC2626;">просроч.</div><b style="font-size:14px;color:#DC2626;">3</b></div>
+            <div class="card" style="padding:8px;text-align:center;"><div style="color:#64748B;">выкуп.</div><b style="font-size:14px;">142</b></div>
+            <div class="card" style="padding:8px;text-align:center;border-color:#FEF3C7;background:#FFFBEB;"><div style="color:#B45309;">→ магаз.</div><b style="font-size:14px;color:#B45309;">2</b></div>
+          </div>
+          <div class="ph" style="height:200px;border-radius:10px;margin-top:12px;">[ фото iPhone 11 ]</div>
+          <div style="margin-top:12px;">
+            <b style="font-size:15px;">iPhone 11 · IMEI 35XXX</b>
+            <div style="font-size:12px;color:#64748B;">Оценка: 14 000 ₽</div>
+            <div style="font-size:12px;margin-top:6px;">Клиент: <a class="text-blue-700">Иванова А. →</a></div>
+            <div style="font-size:12px;color:#64748B;">Договор: #L0142 · 19.05</div>
+          </div>
+
+          <div class="card" style="margin-top:12px;padding:10px;background:#FEF3C7;border-color:#FDE68A;">
+            <b style="color:#B45309;">⚠ Срок истекает через 2 дня</b>
+          </div>
+
+          <div class="card" style="margin-top:12px;padding:14px;text-align:center;">
+            <div style="font-size:11px;color:#64748B;">ДОЛГ СЕЙЧАС</div>
+            <div style="font-size:30px;font-weight:700;color:#1D4ED8;" class="tnums">9 200 ₽</div>
+            <div style="font-size:12px;color:#64748B;margin-top:4px;">+ 0.5%/день = 42 ₽</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;">
+            <div class="btn btn-accent" style="font-size:12px;padding:10px 4px;">✓ Выкупить</div>
+            <div class="btn btn-out" style="font-size:12px;padding:10px 4px;">⟳ Продлить</div>
+            <div class="btn btn-out" style="font-size:12px;padding:10px 4px;">🛒 На полку</div>
+          </div>
+
+          <div style="margin-top:14px;font-size:13px;color:#64748B;">▾ Календарь начислений (6)</div>
+          <div style="margin-top:6px;font-size:13px;color:#64748B;">▾ История продлений (0)</div>
+        </div>
+        <div class="phone-tabs">
+          <div class="phone-tab"><span>⊞</span>Касса</div>
+          <div class="phone-tab"><span>🏪</span>Магазин</div>
+          <div class="phone-tab"><span>👤</span>Клиенты</div>
+          <div class="phone-tab active"><span>💰</span>Залоги</div>
+          <div class="phone-tab"><span>•••</span>Ещё</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="frame-block">
+      <div class="frame-label">ПК</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen">
+          <aside class="pc-sidebar">
+            <div class="logo"><span style="color:#1D4ED8;">◢</span> Помогатор</div>
+            <div class="pc-nav">
+              <div class="pc-nav-item">⊞ Дашборд</div>
+              <div class="pc-nav-item">🛒 Касса</div>
+              <div class="pc-nav-item">🏪 Магазин</div>
+              <div class="pc-nav-item">👤 Клиенты</div>
+              <div class="pc-nav-item active">💰 Залоги</div>
+              <div class="pc-nav-item">📋 Смены</div>
+              <div class="pc-nav-item">📊 Журнал</div>
+            </div>
+          </aside>
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="pc-topbar">
+              <div style="font-size:13px;color:#64748B;">← Залоги · <b style="color:#0F172A;">#L0142 · iPhone 11 · Иванова А.</b></div>
+              <div style="margin-left:auto;"><div class="btn btn-out" style="width:36px;">⋮</div></div>
+            </div>
+            <div class="pc-content" style="padding:20px 24px;background:#F8FAFC;">
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;">
+                <div class="card" style="padding:12px;"><div style="font-size:11px;color:#64748B;">Активные</div><div style="font-size:18px;font-weight:700;">86</div><div style="font-size:11px;color:#64748B;">122 000 ₽</div></div>
+                <div class="card" style="padding:12px;border-color:#FECACA;background:#FEF2F2;"><div style="font-size:11px;color:#DC2626;">Просрочены</div><div style="font-size:18px;font-weight:700;color:#DC2626;">3</div><div style="font-size:11px;color:#64748B;">в grace-периоде</div></div>
+                <div class="card" style="padding:12px;"><div style="font-size:11px;color:#64748B;">Выкуплено</div><div style="font-size:18px;font-weight:700;">142</div><div style="font-size:11px;color:#16A34A;">за месяц +21 400 ₽</div></div>
+                <div class="card" style="padding:12px;border-color:#FEF3C7;background:#FFFBEB;"><div style="font-size:11px;color:#B45309;">К выводу в магазин</div><div style="font-size:18px;font-weight:700;color:#B45309;">2</div><a class="text-xs" style="color:#B45309;text-decoration:underline;">смотреть →</a></div>
+              </div>
+              <div style="display:grid;grid-template-columns:340px 1fr;gap:18px;">
+                <div>
+                  <div class="ph card" style="height:240px;">[ фото iPhone 11 ]</div>
+                  <div class="card" style="margin-top:12px;padding:14px;">
+                    <div style="font-size:13px;"><b>iPhone 11</b></div>
+                    <div style="font-size:12px;color:#64748B;">IMEI 35XXX</div>
+                    <div style="font-size:13px;margin-top:8px;">Оценка: <b class="tnums">14 000 ₽</b></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="card" style="padding:16px;">
+                    <div style="display:grid;grid-template-columns:140px 1fr;gap:6px;font-size:13px;">
+                      <div style="color:#64748B;">Статус</div><div><span class="pill" style="background:#DCFCE7;color:#16A34A;">Активный</span></div>
+                      <div style="color:#64748B;">Клиент</div><div><a class="text-blue-700">Иванова Анна Викт. →</a></div>
+                      <div style="color:#64748B;">Договор</div><div>#L0142 · 19.05.2026</div>
+                      <div style="color:#64748B;">Срок</div><div><span class="pill" style="background:#FEF3C7;color:#B45309;">⚠ 2 дня (до 26.05)</span></div>
+                      <div style="color:#64748B;">Ставка</div><div>0.5 % в день</div>
+                      <div style="color:#64748B;">Сумма займа</div><div class="tnums">8 400 ₽</div>
+                      <div style="color:#64748B;">Долг сейчас</div><div class="tnums"><b style="color:#DC2626;">9 200 ₽</b> (+800 ₽ %)</div>
+                      <div style="color:#64748B;">Выкуп завтра</div><div class="tnums">9 242 ₽</div>
+                    </div>
+                  </div>
+
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-top:14px;">
+                    <div class="btn btn-accent" style="padding:14px;">✓ Выкупить</div>
+                    <div class="btn btn-out" style="padding:14px;">⟳ Продлить</div>
+                    <div class="btn btn-out" style="padding:14px;">🛒 На полку</div>
+                    <div class="btn btn-out" style="padding:14px;">🖨 Договор</div>
+                  </div>
+
+                  <div class="card" style="margin-top:14px;">
+                    <div style="padding:12px 14px;border-bottom:1px solid #F1F5F9;"><b>Календарь начислений</b></div>
+                    <div style="font-size:13px;">
+                      <div style="display:flex;justify-content:space-between;padding:8px 14px;border-bottom:1px solid #F1F5F9;"><span>19.05 · выдача</span><b class="tnums">8 400 ₽</b></div>
+                      <div style="display:flex;justify-content:space-between;padding:8px 14px;border-bottom:1px solid #F1F5F9;"><span>20.05 · процент</span><span class="tnums">+42 ₽</span></div>
+                      <div style="display:flex;justify-content:space-between;padding:8px 14px;border-bottom:1px solid #F1F5F9;"><span>21.05 · процент</span><span class="tnums">+42 ₽</span></div>
+                      <div style="display:flex;justify-content:space-between;padding:8px 14px;border-bottom:1px solid #F1F5F9;"><span>22.05 · процент</span><span class="tnums">+42 ₽</span></div>
+                      <div style="display:flex;justify-content:space-between;padding:8px 14px;border-bottom:1px solid #F1F5F9;"><span>23.05 · процент</span><span class="tnums">+42 ₽</span></div>
+                      <div style="display:flex;justify-content:space-between;padding:8px 14px;background:#EFF6FF;"><b>24.05 · сегодня</b><b class="tnums">+42 ₽</b></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 8b. PAWN → SHOP ============ -->
+<section class="screen" id="pawn-to-shop">
+  <h2>8b. Залог → Магазин <span style="color:#64748B;font-weight:400;font-size:14px;">(когда не выкупили)</span></h2>
+  <p class="desc">Срок истёк, клиент не пришёл, grace-период (например 7 дн.) тоже истёк → залог в системе помечен «готов к продаже» (статус, но никуда не двигается). Сотрудник с правом <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px;color:#0F172A;">pawn.to_shelf</code> видит баннер «Вывести в магазин», открывает модал, ставит витринную цену — только тогда товар попадает в Магазин с пометкой «из залога #L0098».</p>
+  <div class="pair">
+
+    <div class="frame-block">
+      <div class="frame-label">Смартфон · просроченный залог в списке</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-bottom:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;gap:8px;"><span>☰</span><b>Залоги</b></div>
+        </div>
+        <div class="phone-content" style="padding:12px 14px;">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-size:11px;">
+            <div class="card" style="padding:8px;text-align:center;"><div style="color:#64748B;">активные</div><b style="font-size:14px;">86</b></div>
+            <div class="card" style="padding:8px;text-align:center;border-color:#FECACA;background:#FEF2F2;"><div style="color:#DC2626;">просроч.</div><b style="font-size:14px;color:#DC2626;">3</b></div>
+            <div class="card" style="padding:8px;text-align:center;"><div style="color:#64748B;">выкуп.</div><b style="font-size:14px;">142</b></div>
+            <div class="card" style="padding:8px;text-align:center;border-color:#FEF3C7;background:#FFFBEB;"><div style="color:#B45309;">→ магазин</div><b style="font-size:14px;color:#B45309;">2</b></div>
+          </div>
+
+          <div style="margin-top:14px;font-size:12px;color:#B45309;font-weight:600;text-transform:uppercase;">К выводу в магазин (2)</div>
+
+          <div class="card" style="margin-top:8px;padding:12px;border-color:#FEF3C7;background:#FFFBEB;">
+            <div style="display:flex;justify-content:space-between;align-items:start;">
+              <div>
+                <b style="font-size:13px;">#L0098 · Цепь 585, 5.4 г</b>
+                <div style="font-size:11px;color:#64748B;">Сидорова Л. · просрочен 18.05<br>grace истёк 25.05 (вчера)</div>
+              </div>
+              <b class="tnums" style="font-size:13px;">16 200 ₽</b>
+            </div>
+            <div class="btn btn-accent" style="width:100%;margin-top:10px;font-size:13px;padding:10px;">→ Вывести в магазин</div>
+          </div>
+
+          <div class="card" style="margin-top:8px;padding:12px;border-color:#FEF3C7;background:#FFFBEB;">
+            <div style="display:flex;justify-content:space-between;align-items:start;">
+              <div>
+                <b style="font-size:13px;">#L0101 · Samsung A52</b>
+                <div style="font-size:11px;color:#64748B;">Орлов Р. · просрочен 20.05<br>grace истёк 27.05 (вчера)</div>
+              </div>
+              <b class="tnums" style="font-size:13px;">8 400 ₽</b>
+            </div>
+            <div class="btn btn-accent" style="width:100%;margin-top:10px;font-size:13px;padding:10px;">→ Вывести в магазин</div>
+          </div>
+
+          <div style="margin-top:14px;font-size:12px;color:#64748B;font-weight:600;text-transform:uppercase;">Активные (86)</div>
+          <div class="card" style="margin-top:8px;padding:10px;font-size:12px;color:#64748B;">…здесь список активных залогов</div>
+        </div>
+        <div class="phone-tabs">
+          <div class="phone-tab"><span>⊞</span>Касса</div>
+          <div class="phone-tab"><span>🏪</span>Магазин</div>
+          <div class="phone-tab"><span>👤</span>Клиенты</div>
+          <div class="phone-tab active"><span>💰</span>Залоги</div>
+          <div class="phone-tab"><span>•••</span>Ещё</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="frame-block">
+      <div class="frame-label">ПК · модал «Вывод в магазин»</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen" style="position:relative;">
+          <aside class="pc-sidebar">
+            <div class="logo"><span style="color:#1D4ED8;">◢</span> Помогатор</div>
+            <div class="pc-nav">
+              <div class="pc-nav-item">⊞ Дашборд</div>
+              <div class="pc-nav-item">🛒 Касса</div>
+              <div class="pc-nav-item">🏪 Магазин</div>
+              <div class="pc-nav-item">👤 Клиенты</div>
+              <div class="pc-nav-item active">💰 Залоги</div>
+              <div class="pc-nav-item">📋 Смены</div>
+              <div class="pc-nav-item">📊 Журнал</div>
+            </div>
+          </aside>
+          <div style="flex:1;display:flex;flex-direction:column;filter:blur(1px);opacity:.6;">
+            <div class="pc-topbar">
+              <div style="font-size:18px;font-weight:700;">Залоги</div>
+            </div>
+            <div class="pc-content" style="padding:18px 24px;background:#F8FAFC;">
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+                <div class="card" style="padding:14px;"><div style="font-size:11px;color:#64748B;">Активные</div><div style="font-size:20px;font-weight:700;">86</div></div>
+                <div class="card" style="padding:14px;border-color:#FECACA;background:#FEF2F2;"><div style="font-size:11px;color:#DC2626;">Просрочены</div><div style="font-size:20px;font-weight:700;color:#DC2626;">3</div></div>
+                <div class="card" style="padding:14px;"><div style="font-size:11px;color:#64748B;">Выкуплено</div><div style="font-size:20px;font-weight:700;">142</div></div>
+                <div class="card" style="padding:14px;border-color:#FEF3C7;background:#FFFBEB;"><div style="font-size:11px;color:#B45309;">К выводу в магазин</div><div style="font-size:20px;font-weight:700;color:#B45309;">2</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- modal overlay -->
+          <div style="position:absolute;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;">
+            <div class="card" style="width:560px;padding:0;overflow:hidden;">
+              <div style="padding:14px 18px;border-bottom:1px solid #E2E8F0;display:flex;justify-content:space-between;align-items:center;">
+                <div><b style="font-size:15px;">Вывести залог #L0098 в магазин</b><div style="font-size:12px;color:#64748B;">Цепь 585 пр., 5.4 г · Сидорова Л.</div></div>
+                <span style="color:#94A3B8;cursor:pointer;">×</span>
+              </div>
+              <div style="padding:16px 18px;">
+                <div class="card" style="padding:10px;background:#FEF2F2;border-color:#FECACA;font-size:12px;color:#475569;">
+                  <b style="color:#DC2626;">⚠ Срок и grace-период истекли.</b><br>
+                  Клиент уведомлён 17.05, 20.05, 24.05 (SMS+email). Не вернулся.<br>
+                  Залог: 14 000 ₽ · процентов накоплено: 2 200 ₽ · итого 16 200 ₽ долга.
+                </div>
+
+                <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                  <div>
+                    <label class="label">Себестоимость (фиксируется)</label>
+                    <div class="input" style="background:#F8FAFC;color:#64748B;">16 200 ₽</div>
+                  </div>
+                  <div>
+                    <label class="label">Витринная цена *</label>
+                    <div class="input" style="font-weight:700;color:#1D4ED8;">21 000 ₽</div>
+                  </div>
+                </div>
+
+                <div style="margin-top:12px;">
+                  <label class="label">Категория для магазина</label>
+                  <div class="input">Ювелирка → Цепи 585 ▾</div>
+                </div>
+
+                <div style="margin-top:12px;">
+                  <label class="check"><input type="checkbox" checked> Сразу опубликовать на витрине</label>
+                  <label class="check"><input type="checkbox"> Напечатать ценник</label>
+                </div>
+              </div>
+              <div style="padding:12px 18px;border-top:1px solid #E2E8F0;display:flex;justify-content:space-between;align-items:center;background:#F8FAFC;">
+                <div style="font-size:11px;color:#94A3B8;">Действие журналируется (severity=attention)</div>
+                <div style="display:flex;gap:8px;">
+                  <div class="btn btn-out">Отмена</div>
+                  <div class="btn btn-accent">→ Вывести в магазин</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 9. SHIFT CLOSE ============ -->
+<section class="screen" id="shift">
+  <h2>9. Закрытие смены</h2>
+  <p class="desc">Сверка фактической наличности с расчётной. Расхождение &gt; 100 ₽ → обязательная причина. &gt; 500 ₽ или есть правило suspicious → событие severity=suspicious + push Owner-у.</p>
+  <div class="pair">
+
+    <div class="frame-block">
+      <div class="frame-label">Смартфон</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>20:42</span><span>●●●● 5G</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-bottom:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;gap:8px;"><span style="color:#1D4ED8;">←</span><b>Закрытие смены #142</b></div>
+        </div>
+        <div class="phone-content" style="padding:14px;">
+          <div style="font-size:12px;color:#64748B;">Главный · ИР · открыта 09:02</div>
+
+          <div class="card" style="margin-top:12px;padding:12px;">
+            <b style="font-size:13px;">Что было</b>
+            <div style="font-size:12px;margin-top:8px;">
+              <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Принято</span><b>23 шт</b></div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Продано</span><b>17 шт</b></div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Залоги выдано</span><b>4 шт</b></div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Выкуплено</span><b>2 шт</b></div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Возврат</span><b style="color:#DC2626;">−3 200 ₽</b></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px;padding:14px;">
+            <div style="font-size:12px;color:#64748B;">Должно быть в кассе</div>
+            <div style="font-size:20px;font-weight:700;" class="tnums">142 580 ₽</div>
+
+            <label class="label" style="margin-top:12px;">Фактически (пересчитай)</label>
+            <div class="input input-lg tnums" style="font-size:18px;font-weight:700;">142 100 ₽</div>
+
+            <div class="card" style="margin-top:10px;padding:10px;background:#FEF2F2;border-color:#FECACA;">
+              <b style="color:#DC2626;">⚠ Расхождение: −480 ₽</b>
+            </div>
+
+            <label class="label" style="margin-top:12px;">Причина (обязательно)</label>
+            <div class="input" style="height:60px;align-items:flex-start;padding:10px;font-size:12px;color:#64748B;">сдача клиенту не доложила, мелочи не хватило</div>
+          </div>
+
+          <div class="card" style="margin-top:12px;padding:12px;">
+            <label class="label">Передать смену</label>
+            <div class="input">Денис С. (Кассир, с 17:00) ▾</div>
+          </div>
+        </div>
+        <div class="m-cta"><div class="btn btn-accent" style="width:100%;height:48px;">✓ Закрыть и отправить отчёт</div></div>
+      </div></div>
+    </div>
+
+    <div class="frame-block">
+      <div class="frame-label">ПК</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen">
+          <aside class="pc-sidebar">
+            <div class="logo"><span style="color:#1D4ED8;">◢</span> Помогатор</div>
+            <div class="pc-nav">
+              <div class="pc-nav-item">⊞ Дашборд</div>
+              <div class="pc-nav-item">🛒 Касса</div>
+              <div class="pc-nav-item">🏪 Магазин</div>
+              <div class="pc-nav-item">👤 Клиенты</div>
+              <div class="pc-nav-item">💰 Залоги</div>
+              <div class="pc-nav-item active">📋 Смены</div>
+              <div class="pc-nav-item">📊 Журнал</div>
+            </div>
+          </aside>
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="pc-topbar">
+              <div style="font-size:18px;font-weight:700;">Закрытие смены #142</div>
+              <div style="margin-left:auto;font-size:13px;color:#64748B;">Главный филиал · ИР Рязапов · открыта 09:02</div>
+            </div>
+            <div class="pc-content" style="padding:24px;background:#F8FAFC;">
+              <div class="card" style="padding:16px;">
+                <b>Что было</b>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;font-size:13px;">
+                  <div style="color:#64748B;">Принято товаров</div><div><b>23 шт</b> · <span class="tnums">487 200 ₽ выплачено</span></div>
+                  <div style="color:#64748B;">Продано товаров</div><div><b>17 шт</b> · <span class="tnums">612 800 ₽ получено</span></div>
+                  <div style="color:#64748B;">Залогов выдано</div><div><b>4 шт</b> · <span class="tnums">38 000 ₽</span></div>
+                  <div style="color:#64748B;">Залогов выкуплено</div><div><b>2 шт</b> · <span class="tnums" style="color:#16A34A;">+21 400 ₽</span></div>
+                  <div style="color:#64748B;">Прочие</div><div><b>Возврат 1 шт</b> · <span class="tnums" style="color:#DC2626;">−3 200 ₽</span></div>
+                </div>
+              </div>
+
+              <div class="card" style="padding:16px;margin-top:14px;">
+                <b>Деньги</b>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px;align-items:center;">
+                  <div>
+                    <div style="font-size:13px;color:#64748B;">Должно быть в кассе (по системе)</div>
+                    <div style="font-size:28px;font-weight:700;" class="tnums">142 580 ₽</div>
+                    <div style="margin-top:14px;">
+                      <label class="label">Фактически (пересчитай)</label>
+                      <div class="input" style="height:48px;font-size:18px;font-weight:700;" class="tnums">142 100 ₽</div>
+                    </div>
+                    <div class="card" style="margin-top:10px;padding:10px 12px;background:#FEF2F2;border-color:#FECACA;">
+                      <b style="color:#DC2626;">⚠ Расхождение: −480 ₽</b>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="label">Причина (обязательно при расх. > 100 ₽)</label>
+                    <div class="input" style="height:90px;align-items:flex-start;padding:10px;font-size:13px;">Сдача клиенту не доложила, мелочи в кассе не хватило</div>
+                    <div style="margin-top:12px;font-size:13px;">
+                      <label class="check"><input type="checkbox"> Отметить как «недостача» — спишется с сотрудника</label>
+                    </div>
+                    <div style="margin-top:12px;">
+                      <label class="label">Кому передаёшь смену</label>
+                      <div class="input">Денис С. (Кассир, заступает с 17:00) ▾</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;margin-top:16px;">
+                <div class="btn btn-out">Назад</div>
+                <div class="btn btn-accent">✓ Закрыть смену и отправить отчёт</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 10. AUDIT JOURNAL ============ -->
+<section class="screen" id="audit">
+  <h2>10. Журнал событий</h2>
+  <p class="desc">Все действия в системе с подсветкой по правилам. Клик на строку → diff old/new + контекст. Видимость по permissions: own / branch / all.</p>
+  <div class="pair">
+
+    <div class="frame-block">
+      <div class="frame-label">Смартфон</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-bottom:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;gap:8px;"><span style="color:#1D4ED8;">←</span><b>Журнал</b></div>
+        </div>
+        <div class="phone-content" style="padding:12px 14px;">
+          <div class="input" style="background:#fff;">🔍 Что искать</div>
+          <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
+            <span class="pill" style="background:#fff;border:1px solid #E2E8F0;">сегодня ▾</span>
+            <span class="pill" style="background:#fff;border:1px solid #E2E8F0;">⬤ все ▾</span>
+            <span class="pill" style="background:#fff;border:1px solid #E2E8F0;">фильтр</span>
+          </div>
+
+          <div class="card" style="margin-top:12px;">
+            <div class="ev-row" style="background:#FFFBEB;"><span class="sev-attn" style="font-size:16px;">⚠</span><div style="flex:1;"><b>Скидка 23%</b><div style="color:#64748B;">iPhone 13 → Петрову · Анна К.</div></div><span style="color:#94A3B8;">14:08</span></div>
+            <div class="ev-row"><span class="sev-norm">•</span><div style="flex:1;"><b>Продажа TZ-1041</b><div style="color:#64748B;">29 900 ₽ → Иванов А. · Анна К.</div></div><span style="color:#94A3B8;">14:02</span></div>
+            <div class="ev-row"><span class="sev-norm">•</span><div style="flex:1;"><b>Приём iPhone 11</b><div style="color:#64748B;">14 000 ₽ ← Иванов А. · Анна К.</div></div><span style="color:#94A3B8;">13:48</span></div>
+            <div class="ev-row" style="background:#FEF2F2;"><span class="sev-susp" style="font-size:16px;">●</span><div style="flex:1;"><b>Открыт паспорт</b><div style="color:#64748B;">Иванова А. (3-й раз) · Анна К.</div></div><span style="color:#94A3B8;">13:12</span></div>
+            <div class="ev-row" style="background:#FFFBEB;"><span class="sev-attn">⚠</span><div style="flex:1;"><b>Возврат после закр.</b><div style="color:#64748B;">смены #345 · Денис С.</div></div><span style="color:#94A3B8;">11:42</span></div>
+            <div class="ev-row"><span class="sev-norm">•</span><div style="flex:1;"><b>Открытие смены #142</b><div style="color:#64748B;">12 400 ₽ · ИР</div></div><span style="color:#94A3B8;">09:02</span></div>
+          </div>
+        </div>
+        <div class="phone-tabs">
+          <div class="phone-tab"><span>⊞</span>Касса</div>
+          <div class="phone-tab"><span>🏪</span>Магазин</div>
+          <div class="phone-tab"><span>👤</span>Клиенты</div>
+          <div class="phone-tab"><span>💰</span>Залоги</div>
+          <div class="phone-tab active"><span>•••</span>Ещё</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="frame-block">
+      <div class="frame-label">ПК · раскрытое событие</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen">
+          <aside class="pc-sidebar">
+            <div class="logo"><span style="color:#1D4ED8;">◢</span> Помогатор</div>
+            <div class="pc-nav">
+              <div class="pc-nav-item">⊞ Дашборд</div>
+              <div class="pc-nav-item">🛒 Касса</div>
+              <div class="pc-nav-item">🏪 Магазин</div>
+              <div class="pc-nav-item">👤 Клиенты</div>
+              <div class="pc-nav-item">💰 Залоги</div>
+              <div class="pc-nav-item">📋 Смены</div>
+              <div class="pc-nav-item active">📊 Журнал</div>
+            </div>
+          </aside>
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="pc-topbar">
+              <div style="font-size:18px;font-weight:700;">Журнал</div>
+              <div style="margin-left:auto;"><div class="btn btn-out">⚙ Настроить правила</div></div>
+            </div>
+            <div class="pc-content" style="padding:20px 24px;background:#F8FAFC;">
+              <div class="input" style="background:#fff;">🔍 Что искать (товар, клиент, договор...)</div>
+              <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap;">
+                <span class="pill" style="background:#fff;border:1px solid #E2E8F0;">Период: сегодня ▾</span>
+                <span class="pill" style="background:#fff;border:1px solid #E2E8F0;">Severity: все ▾</span>
+                <span class="pill" style="background:#fff;border:1px solid #E2E8F0;">Сотрудник ▾</span>
+                <span class="pill" style="background:#fff;border:1px solid #E2E8F0;">Филиал ▾</span>
+                <span class="pill" style="background:#fff;border:1px solid #E2E8F0;">Тип события ▾</span>
+              </div>
+
+              <div class="card" style="margin-top:14px;">
+                <table style="width:100%;font-size:13px;">
+                  <thead style="background:#F8FAFC;color:#64748B;font-size:11px;text-transform:uppercase;">
+                    <tr>
+                      <th style="padding:10px;text-align:left;width:80px;">Время</th>
+                      <th style="padding:10px;text-align:left;width:50px;">Sev.</th>
+                      <th style="padding:10px;text-align:left;">Событие</th>
+                      <th style="padding:10px;text-align:left;width:100px;">Кто</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="border-top:1px solid #F1F5F9;background:#FFFBEB;">
+                      <td style="padding:10px;">14:08</td>
+                      <td style="padding:10px;"><span class="sev-attn" style="font-size:18px;">⚠</span></td>
+                      <td style="padding:10px;"><b>Скидка 23%</b> на iPhone 13 (TZ-1042) свыше политики 15%</td>
+                      <td style="padding:10px;">Анна К.</td>
+                    </tr>
+                    <tr style="background:#EFF6FF;">
+                      <td colspan="4" style="padding:14px 14px 14px 48px;border-top:1px dashed #BFDBFE;">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+                          <div>
+                            <div style="font-size:11px;color:#64748B;text-transform:uppercase;font-weight:600;">Было → Стало</div>
+                            <div style="font-family:monospace;font-size:12px;margin-top:6px;background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:8px;">
+                              <div style="color:#DC2626;">- price: 38 900 ₽</div>
+                              <div style="color:#16A34A;">+ price: 30 000 ₽ (−23%)</div>
+                              <div style="color:#16A34A;">+ reason: торг с клиентом</div>
+                            </div>
+                          </div>
+                          <div>
+                            <div style="font-size:11px;color:#64748B;text-transform:uppercase;font-weight:600;">Контекст</div>
+                            <div style="font-size:12px;margin-top:6px;color:#475569;">
+                              Смена #142 · касса главного филиала<br>
+                              IP 91.x.x.x · Chrome Windows<br>
+                              <span style="color:#B45309;">Правило: discount_percent > 15 → attention</span>
+                            </div>
+                            <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
+                              <div class="btn btn-out" style="font-size:11px;padding:4px 10px;">Открыть товар</div>
+                              <div class="btn btn-out" style="font-size:11px;padding:4px 10px;">Открыть смену</div>
+                              <div class="btn btn-out" style="font-size:11px;padding:4px 10px;">Профиль Анны К.</div>
+                              <div class="btn btn-ghost" style="font-size:11px;padding:4px 10px;">Игнорировать</div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr style="border-top:1px solid #F1F5F9;"><td style="padding:10px;">14:02</td><td style="padding:10px;"><span class="sev-norm">•</span></td><td style="padding:10px;">Продажа TZ-1041 за 29 900 ₽ → Иванов А.</td><td style="padding:10px;">Анна К.</td></tr>
+                    <tr style="border-top:1px solid #F1F5F9;"><td style="padding:10px;">13:48</td><td style="padding:10px;"><span class="sev-norm">•</span></td><td style="padding:10px;">Приём iPhone 11 за 14 000 ₽ от Иванова А.</td><td style="padding:10px;">Анна К.</td></tr>
+                    <tr style="border-top:1px solid #F1F5F9;background:#FEF2F2;"><td style="padding:10px;">13:12</td><td style="padding:10px;"><span class="sev-susp" style="font-size:18px;">●</span></td><td style="padding:10px;"><b>Открыт паспорт</b> Иванова А. (3-й раз за смену)</td><td style="padding:10px;">Анна К.</td></tr>
+                    <tr style="border-top:1px solid #F1F5F9;background:#FFFBEB;"><td style="padding:10px;">11:42</td><td style="padding:10px;"><span class="sev-attn">⚠</span></td><td style="padding:10px;">Возврат после закрытия смены: #345</td><td style="padding:10px;">Денис С.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 11. ROLES ============ -->
+<section class="screen" id="roles">
+  <h2>11. Конструктор ролей</h2>
+  <p class="desc">Системные пресеты (Owner / Admin / Кассир / Приёмщик / Товаровед / Бухгалтер) клонируются в кастомные. Лимиты с числом (макс. скидка %, мин. коэф. скупки %). Привязка к филиалу.</p>
+  <div class="pair">
+
+    <div class="frame-block">
+      <div class="frame-label">Смартфон</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-bottom:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;gap:8px;"><span style="color:#1D4ED8;">←</span><b style="font-size:13px;">Старший приёмщик</b></div>
+          <a class="text-xs text-blue-700">сохр.</a>
+        </div>
+        <div class="phone-content" style="padding:14px;">
+          <label class="label">Название роли</label>
+          <div class="input">Старший приёмщик</div>
+          <label class="label" style="margin-top:12px;">За основу</label>
+          <div class="input">Приёмщик ▾</div>
+
+          <div style="margin-top:18px;font-weight:700;color:#1D4ED8;">Касса</div>
+          <div class="card" style="padding:10px;margin-top:6px;">
+            <label class="check"><input type="checkbox" checked> Принимать товар</label>
+            <label class="check"><input type="checkbox" checked> Продавать товар</label>
+            <label class="check"><input type="checkbox"> Принимать в залог</label>
+            <label class="check"><input type="checkbox" checked> Скидка до <input style="width:50px;height:24px;border:1px solid #E2E8F0;border-radius:4px;padding:0 6px;" value="15"> %</label>
+            <label class="check"><input type="checkbox" checked> Мин. коэф. скупки <input style="width:50px;height:24px;border:1px solid #E2E8F0;border-radius:4px;padding:0 6px;" value="40"> %</label>
+          </div>
+
+          <div style="margin-top:14px;font-weight:700;color:#1D4ED8;">Товары</div>
+          <div class="card" style="padding:10px;margin-top:6px;">
+            <label class="check"><input type="checkbox" checked> Видеть свой филиал</label>
+            <label class="check"><input type="checkbox"> Видеть все филиалы</label>
+            <label class="check"><input type="checkbox" checked> Редактировать цену</label>
+            <label class="check"><input type="checkbox"> Удалять</label>
+          </div>
+
+          <div style="margin-top:14px;font-weight:700;color:#1D4ED8;">Клиенты</div>
+          <div class="card" style="padding:10px;margin-top:6px;">
+            <label class="check"><input type="checkbox" checked> Видеть карточку</label>
+            <label class="check"><input type="checkbox"> Смотреть паспорт <span style="color:#94A3B8;font-size:11px;">(журналируется)</span></label>
+            <label class="check"><input type="checkbox"> Чёрный список</label>
+          </div>
+
+          <div style="margin-top:14px;font-weight:700;color:#1D4ED8;">Журнал</div>
+          <div class="card" style="padding:10px;margin-top:6px;">
+            <label class="check"><input type="radio" name="r" checked> Только свои действия</label>
+            <label class="check"><input type="radio" name="r"> По своему филиалу</label>
+            <label class="check"><input type="radio" name="r"> Всё</label>
+          </div>
+        </div>
+        <div class="m-cta"><div class="btn btn-accent" style="width:100%;height:48px;">Применить Никите</div></div>
+      </div></div>
+    </div>
+
+    <div class="frame-block">
+      <div class="frame-label">ПК</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen">
+          <aside class="pc-sidebar">
+            <div class="logo"><span style="color:#1D4ED8;">◢</span> Помогатор</div>
+            <div class="pc-nav">
+              <div class="pc-nav-item">⊞ Дашборд</div>
+              <div class="pc-nav-item">🛒 Касса</div>
+              <div class="pc-nav-item">🏪 Магазин</div>
+              <div class="pc-nav-item">👤 Клиенты</div>
+              <div class="pc-nav-item">💰 Залоги</div>
+              <div class="pc-nav-item">📋 Смены</div>
+              <div class="pc-nav-item">📊 Журнал</div>
+              <div class="sep"></div>
+              <div class="pc-nav-item active">👥 Сотрудники</div>
+              <div class="pc-nav-item">🏢 Филиалы</div>
+              <div class="pc-nav-item">⚙ Настройки</div>
+            </div>
+          </aside>
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="pc-topbar">
+              <div style="font-size:13px;color:#64748B;">← Роли · <b style="color:#0F172A;">Кастомная роль для Никиты</b></div>
+              <div style="margin-left:auto;display:flex;gap:8px;"><div class="btn btn-out">Сохранить как…</div></div>
+            </div>
+            <div class="pc-content" style="padding:24px;background:#F8FAFC;">
+              <div style="display:grid;grid-template-columns:300px 1fr;gap:18px;">
+                <div>
+                  <label class="label">Название</label>
+                  <div class="input">Старший приёмщик</div>
+                  <label class="label" style="margin-top:12px;">За основу</label>
+                  <div class="input">Приёмщик ▾</div>
+                  <div style="font-size:12px;color:#64748B;margin-top:8px;">Будут выставлены галочки этого пресета. Меняй где надо.</div>
+
+                  <div class="card" style="padding:12px;margin-top:14px;background:#EFF6FF;border-color:#BFDBFE;">
+                    <b style="font-size:13px;">Привязка к филиалу</b>
+                    <div style="margin-top:8px;">
+                      <label class="check"><input type="radio" checked name="b"> Главный</label>
+                      <label class="check"><input type="radio" name="b"> Точка №2</label>
+                      <label class="check"><input type="radio" name="b"> Доступ ко всем филиалам</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="card" style="padding:14px;">
+                    <b style="color:#1D4ED8;">Касса</b>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+                      <label class="check"><input type="checkbox" checked> Принимать товар</label>
+                      <label class="check"><input type="checkbox" checked> Продавать товар</label>
+                      <label class="check"><input type="checkbox"> Принимать в залог</label>
+                      <label class="check"><input type="checkbox" checked> Скидка до <input style="width:54px;height:24px;border:1px solid #E2E8F0;border-radius:4px;padding:0 6px;margin-left:4px;" value="15"> %</label>
+                      <label class="check"><input type="checkbox" checked> Мин. коэф. скупки <input style="width:54px;height:24px;border:1px solid #E2E8F0;border-radius:4px;padding:0 6px;margin-left:4px;" value="40"> %</label>
+                    </div>
+                  </div>
+
+                  <div class="card" style="padding:14px;margin-top:10px;">
+                    <b style="color:#1D4ED8;">Товары</b>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+                      <label class="check"><input type="checkbox" checked> Видеть свой филиал</label>
+                      <label class="check"><input type="checkbox"> Видеть все филиалы</label>
+                      <label class="check"><input type="checkbox" checked> Редактировать цену</label>
+                      <label class="check"><input type="checkbox"> Удалять</label>
+                      <label class="check"><input type="checkbox" checked> Публиковать на витрину</label>
+                      <label class="check"><input type="checkbox"> Экспорт</label>
+                    </div>
+                  </div>
+
+                  <div class="card" style="padding:14px;margin-top:10px;">
+                    <b style="color:#1D4ED8;">Клиенты</b>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+                      <label class="check"><input type="checkbox" checked> Видеть карточку</label>
+                      <label class="check"><input type="checkbox"> Смотреть паспорт <span style="color:#94A3B8;font-size:11px;">(журналируется)</span></label>
+                      <label class="check"><input type="checkbox"> Чёрный список</label>
+                    </div>
+                  </div>
+
+                  <div class="card" style="padding:14px;margin-top:10px;">
+                    <b style="color:#1D4ED8;">Залоги</b>
+                    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px;">
+                      <label class="check"><input type="checkbox"> Видеть</label>
+                      <label class="check"><input type="checkbox"> Создавать</label>
+                      <label class="check"><input type="checkbox"> Выкуп</label>
+                      <label class="check"><input type="checkbox"> Продление</label>
+                      <label class="check"><input type="checkbox"> На полку</label>
+                    </div>
+                  </div>
+
+                  <div class="card" style="padding:14px;margin-top:10px;">
+                    <b style="color:#1D4ED8;">Журнал</b>
+                    <div style="margin-top:8px;">
+                      <label class="check"><input type="radio" checked name="j"> Только свои действия</label>
+                      <label class="check"><input type="radio" name="j"> По своему филиалу</label>
+                      <label class="check"><input type="radio" name="j"> Всё</label>
+                    </div>
+                    <label class="check" style="margin-top:6px;"><input type="checkbox"> Менять severity (acknowledge)</label>
+                  </div>
+
+                  <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px;">
+                    <div class="btn btn-out">Отмена</div>
+                    <div class="btn btn-accent">Сохранить и применить Никите</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+  <div style="margin-top:24px;background:#1E293B;border-radius:12px;padding:18px 22px;color:#CBD5E1;">
+    <div style="font-size:11px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.05em;">Системные роли (нельзя удалить, можно клонировать в кастомные)</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px;font-size:13px;">
+      <div style="background:#0F172A;border-radius:8px;padding:12px;">
+        <b style="color:#fff;">Owner</b>
+        <div style="color:#94A3B8;font-size:12px;margin-top:4px;">всё, плюс настройки workspace, биллинг, удаление</div>
+      </div>
+      <div style="background:#0F172A;border-radius:8px;padding:12px;">
+        <b style="color:#fff;">Admin</b>
+        <div style="color:#94A3B8;font-size:12px;margin-top:4px;">всё кроме биллинга и удаления workspace</div>
+      </div>
+      <div style="background:#0F172A;border-radius:8px;padding:12px;">
+        <b style="color:#fff;">Кассир</b>
+        <div style="color:#94A3B8;font-size:12px;margin-top:4px;">Касса (продажа), Магазин (read), Журнал (свой)</div>
+      </div>
+      <div style="background:#0F172A;border-radius:8px;padding:12px;">
+        <b style="color:#fff;">Приёмщик</b>
+        <div style="color:#94A3B8;font-size:12px;margin-top:4px;">Касса (приём+продажа), Клиенты, Магазин (свой филиал)</div>
+      </div>
+      <div style="background:#0F172A;border-radius:8px;padding:12px;">
+        <b style="color:#fff;">Товаровед</b>
+        <div style="color:#94A3B8;font-size:12px;margin-top:4px;">Магазин (все филиалы), цены, скидки, вывод залога</div>
+      </div>
+      <div style="background:#0F172A;border-radius:8px;padding:12px;">
+        <b style="color:#fff;">Бухгалтер</b>
+        <div style="color:#94A3B8;font-size:12px;margin-top:4px;">Отчёты, Журнал (всё), Биллинг (view), без Кассы</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#1D4ED8,#2563EB);border-radius:8px;padding:12px;color:#fff;grid-column:span 2;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <b>Клиент с учёткой</b>
+          <span class="pill" style="background:rgba(255,255,255,.25);color:#fff;font-size:10px;">новая · v0.2</span>
+        </div>
+        <div style="font-size:12px;opacity:.9;margin-top:4px;">Не сотрудник workspace. Логинится в кабинет клиента по email. Видит ТОЛЬКО свои залоги (актуальный долг, срок, уведомления) и свои сделки (покупки + продажи нам). Может «Запросить пролонгацию» — это не платёж, а тикет сотруднику. Никакого `view_branch` / `audit.*` / `cash.*`.</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;font-size:12px;color:#94A3B8;">
+      <b style="color:#fff;">Кастомные роли</b> (выше — конструктор «Старший приёмщик») создаются клонированием любой системной роли сотрудника и подкручиванием галочек/лимитов. Клонировать «Клиента с учёткой» нельзя — это закрытая системная роль (чтобы случайно не выдать клиенту доступ к чужим данным).
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12. TARIFFS ============ -->
+<section class="screen" id="tariff">
+  <h2>12. Тарифы и биллинг</h2>
+  <p class="desc">Сейчас Demo · осталось 38 дней · потом fallback на Free. Лимит Demo — только 1 ГБ хранилища (защита от диверсии). Первые 20 платящих — ЮKassa ссылками руками.</p>
+  <div class="pair">
+
+    <div class="frame-block">
+      <div class="frame-label">Смартфон</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-bottom:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;gap:8px;"><span style="color:#1D4ED8;">←</span><b>Тариф</b></div>
+        </div>
+        <div class="phone-content" style="padding:14px;">
+          <div class="card" style="padding:14px;background:#EFF6FF;border-color:#BFDBFE;">
+            <div style="font-size:11px;color:#64748B;">СЕЙЧАС</div>
+            <div style="font-size:20px;font-weight:700;color:#1D4ED8;">Demo</div>
+            <div style="font-size:12px;color:#64748B;margin-top:4px;">Осталось 38 дней (до 01.07.2026)<br>Потом → Free автоматически</div>
+          </div>
+
+          <div style="margin-top:14px;font-size:13px;font-weight:600;">Использование Demo</div>
+          <div class="card" style="padding:12px;margin-top:6px;font-size:12px;">
+            <div style="margin-bottom:8px;">Хранилище<div style="display:flex;justify-content:space-between;"><span>412 МБ / 1 ГБ</span><b>41%</b></div>
+              <div style="height:6px;background:#E2E8F0;border-radius:3px;margin-top:4px;"><div style="width:41%;height:100%;background:#1D4ED8;border-radius:3px;"></div></div>
+            </div>
+            <div style="margin-bottom:8px;">Сотрудники<div style="display:flex;justify-content:space-between;"><span>5 / без огр.</span></div></div>
+            <div>Активные товары<div style="display:flex;justify-content:space-between;"><span>342 / без огр.</span></div></div>
+          </div>
+
+          <div style="margin-top:18px;font-size:13px;font-weight:600;">Выбрать тариф</div>
+
+          <div class="tcard" style="margin-top:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:start;"><b>Free</b><span style="font-size:11px;color:#64748B;">навсегда</span></div>
+            <div style="font-size:18px;font-weight:700;margin-top:2px;">0 ₽</div>
+            <div style="font-size:11px;color:#64748B;margin-top:4px;">1 юзер · 200 МБ · 1 филиал</div>
+            <div class="btn btn-out" style="width:100%;margin-top:8px;font-size:12px;padding:8px;">Откатиться</div>
+          </div>
+
+          <div class="tcard" style="margin-top:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:start;"><b>Basic</b><span style="font-size:11px;color:#64748B;">/мес</span></div>
+            <div style="font-size:18px;font-weight:700;margin-top:2px;">990 ₽</div>
+            <div style="font-size:11px;color:#64748B;margin-top:4px;">3 юзера · 5 ГБ · 1 филиал · касса+склад</div>
+            <div class="btn btn-pri" style="width:100%;margin-top:8px;font-size:12px;padding:8px;">Выбрать</div>
+          </div>
+
+          <div class="tcard featured" style="margin-top:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:start;">
+              <div><b>Pro</b> <span class="pill" style="background:#1D4ED8;color:#fff;margin-left:4px;">рекоменд.</span></div>
+              <span style="font-size:11px;color:#64748B;">/мес</span>
+            </div>
+            <div style="font-size:18px;font-weight:700;margin-top:2px;">2 490 ₽</div>
+            <div style="font-size:11px;color:#64748B;margin-top:4px;">10 юзер · 50 ГБ · 3 фил. · залоги · витрина · фискализация · OCR</div>
+            <div class="btn btn-accent" style="width:100%;margin-top:8px;font-size:12px;padding:8px;">Выбрать Pro</div>
+          </div>
+        </div>
+        <div class="phone-tabs">
+          <div class="phone-tab"><span>⊞</span>Касса</div>
+          <div class="phone-tab"><span>🏪</span>Магазин</div>
+          <div class="phone-tab"><span>👤</span>Клиенты</div>
+          <div class="phone-tab"><span>💰</span>Залоги</div>
+          <div class="phone-tab active"><span>•••</span>Ещё</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="frame-block">
+      <div class="frame-label">ПК</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen">
+          <aside class="pc-sidebar">
+            <div class="logo"><span style="color:#1D4ED8;">◢</span> Помогатор</div>
+            <div class="pc-nav">
+              <div class="pc-nav-item">⊞ Дашборд</div>
+              <div class="pc-nav-item">🛒 Касса</div>
+              <div class="pc-nav-item">🏪 Магазин</div>
+              <div class="pc-nav-item">👤 Клиенты</div>
+              <div class="pc-nav-item">💰 Залоги</div>
+              <div class="pc-nav-item">📋 Смены</div>
+              <div class="pc-nav-item">📊 Журнал</div>
+              <div class="sep"></div>
+              <div class="pc-nav-item">👥 Сотрудники</div>
+              <div class="pc-nav-item">🏢 Филиалы</div>
+              <div class="pc-nav-item">⚙ Настройки</div>
+              <div class="pc-nav-item active">💳 Тариф</div>
+            </div>
+          </aside>
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="pc-topbar">
+              <div style="font-size:18px;font-weight:700;">Тариф</div>
+            </div>
+            <div class="pc-content" style="padding:20px 24px;background:#F8FAFC;">
+              <div class="card" style="padding:18px;background:#EFF6FF;border-color:#BFDBFE;">
+                <div style="display:flex;align-items:center;gap:24px;">
+                  <div>
+                    <div style="font-size:11px;color:#64748B;text-transform:uppercase;">Сейчас</div>
+                    <div style="font-size:28px;font-weight:700;color:#1D4ED8;">Demo</div>
+                    <div style="font-size:13px;color:#64748B;">Осталось 38 дней (до 01.07.2026) · потом → Free автоматически, ничего не пропадёт.</div>
+                  </div>
+                  <div style="flex:1;">
+                    <div style="font-size:13px;">Хранилище: <b>412 МБ / 1 ГБ (41%)</b></div>
+                    <div style="height:8px;background:#fff;border-radius:4px;margin-top:6px;border:1px solid #BFDBFE;"><div style="width:41%;height:100%;background:#1D4ED8;border-radius:4px;"></div></div>
+                    <div style="display:flex;gap:18px;margin-top:10px;font-size:12px;color:#64748B;">
+                      <span>Сотрудники: <b style="color:#0F172A;">5 / ∞</b></span>
+                      <span>Активные товары: <b style="color:#0F172A;">342 / ∞</b></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top:18px;font-weight:700;">Выбрать тариф</div>
+              <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:10px;">
+                <div class="tcard">
+                  <b>Free</b><div style="font-size:11px;color:#64748B;">навсегда</div>
+                  <div style="font-size:20px;font-weight:700;margin-top:6px;">0 ₽</div>
+                  <div style="font-size:11px;color:#64748B;margin-top:8px;line-height:1.6;">1 юзер<br>200 МБ<br>1 филиал<br>100 товаров<br><span style="color:#1D4ED8;">кабинет клиента: view-only</span></div>
+                  <div class="btn btn-out" style="width:100%;margin-top:10px;font-size:12px;padding:6px;">Откатиться</div>
+                </div>
+                <div class="tcard" style="background:#F8FAFC;border-color:#1D4ED8;">
+                  <div style="display:flex;justify-content:space-between;align-items:start;"><b>Demo</b><span class="pill" style="background:#1D4ED8;color:#fff;">текущий</span></div>
+                  <div style="font-size:11px;color:#64748B;">45 дней</div>
+                  <div style="font-size:20px;font-weight:700;margin-top:6px;">0 ₽</div>
+                  <div style="font-size:11px;color:#64748B;margin-top:8px;line-height:1.6;">∞ юзер.<br>1 ГБ<br>∞ филиалов<br>всё открыто<br><span style="color:#1D4ED8;">кабинет клиента: всё</span></div>
+                  <div class="btn btn-out" style="width:100%;margin-top:10px;font-size:12px;padding:6px;opacity:.5;">активен</div>
+                </div>
+                <div class="tcard">
+                  <b>Basic</b><div style="font-size:11px;color:#64748B;">/мес</div>
+                  <div style="font-size:20px;font-weight:700;margin-top:6px;">990 ₽</div>
+                  <div style="font-size:11px;color:#64748B;margin-top:8px;line-height:1.6;">3 юзера<br>5 ГБ<br>1 филиал<br>2 000 товаров<br>касса+склад<br><span style="color:#1D4ED8;">кабинет клиента: + запрос пролонгации</span></div>
+                  <div class="btn btn-pri" style="width:100%;margin-top:10px;font-size:12px;padding:6px;">Выбрать</div>
+                </div>
+                <div class="tcard featured">
+                  <div style="display:flex;justify-content:space-between;align-items:start;"><b>Pro</b><span class="pill" style="background:#EA580C;color:#fff;">↑ хит</span></div>
+                  <div style="font-size:11px;color:#64748B;">/мес</div>
+                  <div style="font-size:20px;font-weight:700;margin-top:6px;">2 490 ₽</div>
+                  <div style="font-size:11px;color:#64748B;margin-top:8px;line-height:1.6;">10 юзер.<br>50 ГБ<br>3 филиала<br>20 000 товаров<br>+залоги<br>+витрина<br>+фискализация<br>+OCR<br><span style="color:#1D4ED8;">кабинет клиента: + авто-нотификации SMS/email</span></div>
+                  <div class="btn btn-accent" style="width:100%;margin-top:10px;font-size:12px;padding:6px;">Выбрать Pro</div>
+                </div>
+                <div class="tcard">
+                  <b>Enterprise</b><div style="font-size:11px;color:#64748B;">договор</div>
+                  <div style="font-size:20px;font-weight:700;margin-top:6px;">—</div>
+                  <div style="font-size:11px;color:#64748B;margin-top:8px;line-height:1.6;">∞ юзер.<br>500 ГБ<br>∞ филиалов<br>∞ товаров<br>всё + SLA<br><span style="color:#1D4ED8;">кабинет клиента: + свой поддомен my.<wbr>name.<wbr>ru</span></div>
+                  <div class="btn btn-out" style="width:100%;margin-top:10px;font-size:12px;padding:6px;">Связаться</div>
+                </div>
+              </div>
+
+              <div style="margin-top:14px;font-size:12px;color:#64748B;text-align:center;">Первые 10 платящих — полцены пожизненно (early adopter).</div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 13. CLIENT PORTAL ============ -->
+<section class="screen" id="client-portal">
+  <h2>13. Кабинет клиента <span style="color:#64748B;font-weight:400;font-size:14px;">(отдельный продукт, без кассы)</span></h2>
+  <p class="desc">Клиент заводит личный кабинет по email и видит: свои активные залоги с актуальным долгом и сроком, кнопку «Пролонгировать» (отправляет запрос сотруднику — никакой автооплаты пока), историю своих сделок (покупки + продажи нам). Это снимает звонки «а сколько я должен?» с приёмщиков. Платёж и реальная пролонгация — следующая итерация, после подключения ЮKassa.</p>
+  <div class="pair">
+
+    <!-- PHONE -->
+    <div class="frame-block">
+      <div class="frame-label">Смартфон · кабинет клиента</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G</span></div>
+        <div style="padding:14px 16px;background:#0F172A;color:#fff;">
+          <div style="font-size:11px;opacity:.7;">ТЕХ ЗОЛОТО 24 · ЛИЧНЫЙ КАБИНЕТ</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+            <div>
+              <b style="font-size:15px;">Иванова Анна Викт.</b>
+              <div style="font-size:11px;opacity:.7;">ivanova@mail.ru</div>
+            </div>
+            <span style="width:34px;height:34px;border-radius:50%;background:#1D4ED8;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">ИА</span>
+          </div>
+        </div>
+
+        <div style="display:flex;background:#fff;border-bottom:1px solid #E2E8F0;">
+          <div style="flex:1;padding:12px;text-align:center;font-size:13px;font-weight:600;color:#1D4ED8;border-bottom:2px solid #1D4ED8;">💰 Залоги <span style="background:#DC2626;color:#fff;padding:1px 6px;border-radius:999px;font-size:10px;margin-left:2px;">1</span></div>
+          <div style="flex:1;padding:12px;text-align:center;font-size:13px;color:#64748B;">📋 Мои сделки</div>
+        </div>
+
+        <div class="phone-content" style="padding:14px 16px;">
+          <div style="font-size:12px;color:#64748B;">У вас 1 активный залог</div>
+
+          <div class="card" style="margin-top:8px;padding:14px;border-color:#FECACA;background:#FEF2F2;">
+            <div style="display:flex;justify-content:space-between;align-items:start;">
+              <div>
+                <b style="font-size:14px;">iPhone 11</b>
+                <div style="font-size:11px;color:#64748B;">договор #L0142 от 19.05</div>
+              </div>
+              <span class="pill" style="background:#DC2626;color:#fff;">⚠ 2 дня</span>
+            </div>
+
+            <div style="margin-top:12px;padding:10px;background:#fff;border-radius:8px;text-align:center;">
+              <div style="font-size:10px;color:#64748B;">К возврату сегодня</div>
+              <div style="font-size:28px;font-weight:700;color:#DC2626;" class="tnums">9 200 ₽</div>
+              <div style="font-size:11px;color:#64748B;margin-top:2px;">+ 42 ₽ за каждый день</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;font-size:11px;">
+              <div><span style="color:#64748B;">срок до:</span> <b>26.05.2026</b></div>
+              <div><span style="color:#64748B;">ставка:</span> <b>0.5%/день</b></div>
+            </div>
+
+            <div class="btn btn-pri" style="width:100%;margin-top:10px;font-size:13px;padding:10px;">⟳ Запросить пролонгацию</div>
+            <div style="font-size:10px;color:#94A3B8;margin-top:6px;text-align:center;">сотрудник свяжется и пришлёт ссылку на оплату</div>
+          </div>
+
+          <div style="margin-top:14px;font-size:11px;color:#64748B;">
+            ⓘ Что такое пролонгация: вы продлеваете срок на ещё 30 дней, оплачивая накопленные проценты. Сейчас это <b style="color:#0F172A;" class="tnums">800 ₽</b>.
+          </div>
+
+          <div class="card" style="margin-top:14px;padding:12px;">
+            <b style="font-size:13px;">Адрес ломбарда</b>
+            <div style="font-size:12px;color:#64748B;margin-top:4px;">г. Уфа, ул. Ленина, 42, оф. 3<br>пн-сб 10:00–20:00 · вс 11:00–18:00</div>
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <div class="btn btn-out" style="flex:1;font-size:11px;padding:8px;">📍 Маршрут</div>
+              <div class="btn btn-out" style="flex:1;font-size:11px;padding:8px;">📞 Позвонить</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-tabs">
+          <div class="phone-tab active"><span style="font-size:18px;">💰</span>Залоги</div>
+          <div class="phone-tab"><span style="font-size:18px;">📋</span>Сделки</div>
+          <div class="phone-tab"><span style="font-size:18px;">📄</span>Документы</div>
+          <div class="phone-tab"><span style="font-size:18px;">👤</span>Профиль</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- DESKTOP -->
+    <div class="frame-block">
+      <div class="frame-label">ПК · кабинет клиента + модал «Запросить пролонгацию»</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen" style="position:relative;background:#F8FAFC;flex-direction:column;">
+
+          <!-- topbar — не sidebar, кабинет клиента упрощённый -->
+          <div style="background:#0F172A;color:#fff;padding:12px 32px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:24px;">
+              <b style="font-size:16px;">Тех Золото 24 <span style="opacity:.6;font-weight:400;font-size:12px;">· личный кабинет</span></b>
+              <div style="display:flex;gap:16px;font-size:13px;">
+                <a style="color:#fff;font-weight:600;border-bottom:2px solid #1D4ED8;padding-bottom:8px;">💰 Залоги <span style="background:#DC2626;color:#fff;padding:1px 6px;border-radius:999px;font-size:10px;">1</span></a>
+                <a style="color:#94A3B8;">📋 Мои сделки</a>
+                <a style="color:#94A3B8;">📄 Документы</a>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;">
+              <span>Иванова А. В.</span>
+              <span style="width:32px;height:32px;border-radius:50%;background:#1D4ED8;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">ИА</span>
+            </div>
+          </div>
+
+          <div style="padding:24px 32px;flex:1;filter:blur(.5px);opacity:.85;">
+            <div style="font-size:22px;font-weight:700;">Ваши залоги</div>
+            <div style="color:#64748B;font-size:13px;margin-top:4px;">1 активный</div>
+
+            <div class="card" style="margin-top:16px;padding:18px;display:grid;grid-template-columns:200px 1fr 280px;gap:24px;border-color:#FECACA;background:#FEF2F2;">
+              <div class="ph" style="height:140px;border-radius:8px;">[ iPhone 11 ]</div>
+              <div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <b style="font-size:18px;">iPhone 11</b>
+                  <span class="pill" style="background:#DC2626;color:#fff;">⚠ срок через 2 дня</span>
+                </div>
+                <div style="font-size:13px;color:#64748B;margin-top:4px;">договор #L0142 от 19.05.2026 · IMEI 35XXXXXXXXXX</div>
+
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;font-size:13px;">
+                  <div><div style="color:#64748B;font-size:11px;">срок до</div><b>26.05.2026</b></div>
+                  <div><div style="color:#64748B;font-size:11px;">ставка</div><b>0.5%/день</b></div>
+                  <div><div style="color:#64748B;font-size:11px;">оценка</div><b class="tnums">14 000 ₽</b></div>
+                </div>
+
+                <div style="margin-top:14px;font-size:12px;color:#64748B;">
+                  ⓘ Пролонгация продлевает срок ещё на 30 дней. Сейчас стоит <b style="color:#0F172A;" class="tnums">800 ₽</b> (накопленные %).
+                </div>
+              </div>
+
+              <div style="background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:16px;text-align:center;">
+                <div style="font-size:11px;color:#64748B;">К ВОЗВРАТУ СЕГОДНЯ</div>
+                <div style="font-size:32px;font-weight:700;color:#DC2626;" class="tnums">9 200 ₽</div>
+                <div style="font-size:12px;color:#64748B;margin-top:2px;">+ 42 ₽ за каждый следующий день</div>
+                <div class="btn btn-pri" style="width:100%;margin-top:12px;">⟳ Запросить пролонгацию</div>
+                <div style="font-size:10px;color:#94A3B8;margin-top:4px;">сотрудник пришлёт ссылку</div>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+              <div class="card" style="padding:14px;">
+                <b style="font-size:13px;">Адрес ломбарда</b>
+                <div style="font-size:12px;color:#64748B;margin-top:6px;">г. Уфа, ул. Ленина, 42, оф. 3<br>пн-сб 10:00–20:00 · вс 11:00–18:00</div>
+              </div>
+              <div class="card" style="padding:14px;">
+                <b style="font-size:13px;">История уведомлений</b>
+                <div style="font-size:12px;color:#64748B;margin-top:6px;">
+                  17.05 SMS «через 7 дней истекает срок»<br>
+                  20.05 Email «через 4 дня истекает срок»<br>
+                  23.05 SMS «завтра истекает срок»
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- modal -->
+          <div style="position:absolute;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:center;justify-content:center;">
+            <div class="card" style="width:520px;padding:0;overflow:hidden;">
+              <div style="padding:14px 18px;border-bottom:1px solid #E2E8F0;display:flex;justify-content:space-between;">
+                <b style="font-size:15px;">Запрос на пролонгацию</b>
+                <span style="color:#94A3B8;">×</span>
+              </div>
+              <div style="padding:18px;">
+                <div style="font-size:13px;">Договор: <b>#L0142 · iPhone 11</b></div>
+                <div style="font-size:13px;margin-top:6px;">Продлить срок на:</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;">
+                  <div class="card" style="padding:10px;text-align:center;cursor:pointer;">+15 дней<br><b style="color:#1D4ED8;" class="tnums">400 ₽</b></div>
+                  <div class="card" style="padding:10px;text-align:center;border-color:#1D4ED8;background:#EFF6FF;cursor:pointer;">+30 дней<br><b style="color:#1D4ED8;" class="tnums">800 ₽</b></div>
+                  <div class="card" style="padding:10px;text-align:center;cursor:pointer;">+60 дней<br><b style="color:#1D4ED8;" class="tnums">1 600 ₽</b></div>
+                </div>
+
+                <div class="card" style="padding:10px;margin-top:14px;background:#FFFBEB;border-color:#FEF3C7;font-size:12px;color:#475569;">
+                  <b style="color:#B45309;">Что произойдёт:</b><br>
+                  1. Запрос уйдёт сотруднику Тех Золото 24.<br>
+                  2. Сотрудник пришлёт ссылку на оплату на email/SMS.<br>
+                  3. После оплаты срок продлится автоматически, в кабинете обновится.<br>
+                  <span style="color:#94A3B8;">Автоплатёж пока не подключён — обработка ручная, до 1 рабочего дня.</span>
+                </div>
+
+                <label class="label" style="margin-top:14px;">Комментарий (необязательно)</label>
+                <div class="input" style="height:50px;align-items:flex-start;padding:8px;color:#94A3B8;">например: «приду в субботу с наличными»</div>
+              </div>
+              <div style="padding:12px 18px;border-top:1px solid #E2E8F0;display:flex;justify-content:flex-end;gap:8px;background:#F8FAFC;">
+                <div class="btn btn-out">Отмена</div>
+                <div class="btn btn-accent">→ Отправить запрос</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:24px;padding:14px 18px;background:#1E293B;border-radius:10px;color:#CBD5E1;font-size:13px;">
+    <b style="color:#fff;">Сторона сотрудника:</b> в Помогаторе появляется значок «🔔 Запрос на пролонгацию от Ивановой А.» → сотрудник видит карточку залога, нажимает «Создать ссылку на оплату» → копирует ЮKassa-ссылку и отправляет клиенту (на старте — руками, в духе early-adopter подхода из START_HERE). После того как клиент оплатил, сотрудник вручную нажимает «Пролонгация оплачена» → срок продлевается + новый снапшот в <code style="background:#0F172A;padding:1px 4px;border-radius:3px;">pawn_calculations</code>. <b style="color:#fff;">К кассе не подключаем</b> — это отдельная цепочка, в MVP минимально жизнеспособная.
+  </div>
+</section>
+
+<!-- ============ 14. SETTINGS ============ -->
+<section class="screen" id="settings">
+  <h2>14. Настройки</h2>
+  <p class="desc">Единый узел управления: доступ сотрудников, общие настройки проекта, шаблоны договоров, модули, интеграции, безопасность. Растёт как конструктор — каждый новый модуль добавляет свою секцию. Виден только Owner / Admin (или сотрудникам с конкретным `settings.<section>.view`).</p>
+  <div class="pair">
+
+    <!-- PHONE -->
+    <div class="frame-block">
+      <div class="frame-label">Смартфон · список секций</div>
+      <div class="phone"><div class="phone-screen">
+        <div class="phone-status"><span>9:41</span><span>●●●● 5G</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-bottom:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;gap:8px;"><span style="color:#1D4ED8;">←</span><b>Настройки</b></div>
+        </div>
+        <div class="phone-content" style="padding:12px 14px;">
+
+          <div style="font-size:11px;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:6px;">Проект</div>
+          <div class="card" style="padding:0;">
+            <div style="padding:12px 14px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;"><span>⚙ Общие</span><span style="color:#94A3B8;">›</span></div>
+            <div style="padding:12px 14px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;"><span>🏢 Филиалы (2)</span><span style="color:#94A3B8;">›</span></div>
+            <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;"><span>🧩 Модули</span><span style="color:#94A3B8;">2 вкл. ›</span></div>
+          </div>
+
+          <div style="font-size:11px;color:#64748B;font-weight:600;text-transform:uppercase;margin:14px 0 6px;">Команда</div>
+          <div class="card" style="padding:0;">
+            <div style="padding:12px 14px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;"><span>👥 Сотрудники (5)</span><span style="color:#94A3B8;">›</span></div>
+            <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;"><span>🛡 Роли и доступы</span><span style="color:#94A3B8;">7 ролей ›</span></div>
+          </div>
+
+          <div style="font-size:11px;color:#64748B;font-weight:600;text-transform:uppercase;margin:14px 0 6px;">Документы и деньги</div>
+          <div class="card" style="padding:0;">
+            <div style="padding:12px 14px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;background:#EFF6FF;"><span style="color:#1D4ED8;font-weight:600;">📄 Шаблоны договоров</span><span style="color:#1D4ED8;">3 шаблона ›</span></div>
+            <div style="padding:12px 14px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;"><span>💰 Залоги · ставка %, grace</span><span style="color:#94A3B8;">›</span></div>
+            <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;"><span>💳 Тариф и биллинг</span><span style="color:#94A3B8;">Demo ›</span></div>
+          </div>
+
+          <div style="font-size:11px;color:#64748B;font-weight:600;text-transform:uppercase;margin:14px 0 6px;">Прочее</div>
+          <div class="card" style="padding:0;">
+            <div style="padding:12px 14px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;"><span>🔔 Уведомления</span><span style="color:#94A3B8;">›</span></div>
+            <div style="padding:12px 14px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;"><span>🔌 Интеграции</span><span style="color:#94A3B8;">АТОЛ, ЮKassa ›</span></div>
+            <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;"><span>🔒 Безопасность</span><span style="color:#94A3B8;">›</span></div>
+          </div>
+
+        </div>
+        <div class="phone-tabs">
+          <div class="phone-tab"><span>⊞</span>Касса</div>
+          <div class="phone-tab"><span>🏪</span>Магазин</div>
+          <div class="phone-tab"><span>👤</span>Клиенты</div>
+          <div class="phone-tab"><span>💰</span>Залоги</div>
+          <div class="phone-tab active"><span>•••</span>Ещё</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- DESKTOP -->
+    <div class="frame-block">
+      <div class="frame-label">ПК · открыт раздел «Шаблоны договоров»</div>
+      <div class="desktop-wrap"><div class="desktop">
+        <div class="desktop-bar"><i style="background:#ff5f56"></i><i style="background:#ffbd2e"></i><i style="background:#27c93f"></i></div>
+        <div class="desktop-screen">
+          <aside class="pc-sidebar">
+            <div class="logo"><span style="color:#1D4ED8;">◢</span> Помогатор</div>
+            <div class="pc-nav">
+              <div class="pc-nav-item">⊞ Дашборд</div>
+              <div class="pc-nav-item">🛒 Касса</div>
+              <div class="pc-nav-item">🏪 Магазин</div>
+              <div class="pc-nav-item">👤 Клиенты</div>
+              <div class="pc-nav-item">💰 Залоги</div>
+              <div class="pc-nav-item">📋 Смены</div>
+              <div class="pc-nav-item">📊 Журнал</div>
+              <div class="sep"></div>
+              <div class="pc-nav-item active">⚙ Настройки</div>
+            </div>
+          </aside>
+
+          <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="pc-topbar">
+              <div style="font-size:18px;font-weight:700;">Настройки</div>
+              <div style="margin-left:auto;font-size:12px;color:#64748B;">Изменения сохраняются автоматически</div>
+            </div>
+
+            <div style="flex:1;display:flex;overflow:hidden;">
+
+              <!-- inner sidebar -->
+              <div style="width:220px;background:#fff;border-right:1px solid #E2E8F0;padding:12px;overflow:auto;font-size:13px;">
+                <div style="font-size:10px;color:#94A3B8;font-weight:600;text-transform:uppercase;padding:4px 8px;">Проект</div>
+                <div style="padding:8px 10px;border-radius:6px;">⚙ Общие</div>
+                <div style="padding:8px 10px;border-radius:6px;">🏢 Филиалы <span style="color:#94A3B8;font-size:11px;">2</span></div>
+                <div style="padding:8px 10px;border-radius:6px;">🧩 Модули <span style="color:#94A3B8;font-size:11px;">2 вкл.</span></div>
+
+                <div style="font-size:10px;color:#94A3B8;font-weight:600;text-transform:uppercase;padding:12px 8px 4px;">Команда</div>
+                <div style="padding:8px 10px;border-radius:6px;">👥 Сотрудники <span style="color:#94A3B8;font-size:11px;">5</span></div>
+                <div style="padding:8px 10px;border-radius:6px;">🛡 Роли и доступы <span style="color:#94A3B8;font-size:11px;">7</span></div>
+
+                <div style="font-size:10px;color:#94A3B8;font-weight:600;text-transform:uppercase;padding:12px 8px 4px;">Документы и деньги</div>
+                <div style="padding:8px 10px;border-radius:6px;background:#EFF6FF;color:#1D4ED8;font-weight:600;">📄 Шаблоны договоров</div>
+                <div style="padding:8px 10px;border-radius:6px;">💰 Залоги (% и условия)</div>
+                <div style="padding:8px 10px;border-radius:6px;">💳 Тариф и биллинг</div>
+
+                <div style="font-size:10px;color:#94A3B8;font-weight:600;text-transform:uppercase;padding:12px 8px 4px;">Прочее</div>
+                <div style="padding:8px 10px;border-radius:6px;">🔔 Уведомления</div>
+                <div style="padding:8px 10px;border-radius:6px;">🔌 Интеграции</div>
+                <div style="padding:8px 10px;border-radius:6px;">🔒 Безопасность</div>
+                <div style="padding:8px 10px;border-radius:6px;color:#94A3B8;">🌐 API витрины</div>
+              </div>
+
+              <!-- inner content -->
+              <div style="flex:1;overflow:auto;padding:20px 24px;background:#F8FAFC;">
+                <div style="font-size:18px;font-weight:700;">Шаблоны договоров</div>
+                <div style="color:#64748B;font-size:13px;margin-top:4px;">Подставляем в договоры данные клиента, товара и реквизиты проекта. Можно использовать наши шаблоны или загрузить свой DOCX/HTML с placeholders (<code style="background:#F1F5F9;padding:1px 4px;border-radius:3px;">{{client.name}}</code>, <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px;">{{item.title}}</code>, <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px;">{{deal.amount}}</code>).</div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;">
+
+                  <div class="card" style="padding:14px;">
+                    <div style="display:flex;justify-content:space-between;align-items:start;">
+                      <div>
+                        <b>Купля-продажа</b>
+                        <div style="font-size:12px;color:#64748B;">приём товара у клиента + продажа клиенту</div>
+                      </div>
+                      <span class="pill" style="background:#DCFCE7;color:#16A34A;">✓ активен</span>
+                    </div>
+                    <div style="font-size:12px;color:#64748B;margin-top:8px;">шаблон: <b>Стандартный купли-продажи v2</b><br>обновлён 12.04.2026 · 47 раз использован за май</div>
+                    <div style="display:flex;gap:6px;margin-top:10px;">
+                      <div class="btn btn-out" style="font-size:12px;padding:6px 10px;">👁 Просмотр</div>
+                      <div class="btn btn-out" style="font-size:12px;padding:6px 10px;">✏ Редактировать</div>
+                      <div class="btn btn-out" style="font-size:12px;padding:6px 10px;">⇪ Заменить файл</div>
+                    </div>
+                  </div>
+
+                  <div class="card" style="padding:14px;">
+                    <div style="display:flex;justify-content:space-between;align-items:start;">
+                      <div>
+                        <b>Залоговый билет</b>
+                        <div style="font-size:12px;color:#64748B;">для модуля «Ломбард»</div>
+                      </div>
+                      <span class="pill" style="background:#DCFCE7;color:#16A34A;">✓ активен</span>
+                    </div>
+                    <div style="font-size:12px;color:#64748B;margin-top:8px;">шаблон: <b>Залоговый билет v1.3</b><br>обновлён 02.05.2026 · 14 раз использован за май</div>
+                    <div style="display:flex;gap:6px;margin-top:10px;">
+                      <div class="btn btn-out" style="font-size:12px;padding:6px 10px;">👁 Просмотр</div>
+                      <div class="btn btn-out" style="font-size:12px;padding:6px 10px;">✏ Редактировать</div>
+                      <div class="btn btn-out" style="font-size:12px;padding:6px 10px;">⇪ Заменить файл</div>
+                    </div>
+                  </div>
+
+                  <div class="card" style="padding:14px;">
+                    <div style="display:flex;justify-content:space-between;align-items:start;">
+                      <div>
+                        <b>Комиссия (продажа от имени клиента)</b>
+                        <div style="font-size:12px;color:#64748B;">когда клиент не продаёт, а оставляет на реализацию</div>
+                      </div>
+                      <span class="pill" style="background:#F1F5F9;color:#64748B;">отключён</span>
+                    </div>
+                    <div style="font-size:12px;color:#64748B;margin-top:8px;">шаблон: <b>Договор комиссии v1.0</b><br>не использовался</div>
+                    <div style="display:flex;gap:6px;margin-top:10px;">
+                      <div class="btn btn-out" style="font-size:12px;padding:6px 10px;">Включить</div>
+                      <div class="btn btn-out" style="font-size:12px;padding:6px 10px;">👁 Просмотр</div>
+                    </div>
+                  </div>
+
+                  <div class="card" style="padding:14px;border:1px dashed #BFDBFE;background:#EFF6FF;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+                    <div style="font-size:28px;color:#1D4ED8;">+</div>
+                    <b style="color:#1D4ED8;">Загрузить свой шаблон</b>
+                    <div style="font-size:12px;color:#64748B;margin-top:4px;">DOCX или HTML с переменными<br><a class="text-blue-700">скачать список плейсхолдеров →</a></div>
+                  </div>
+
+                </div>
+
+                <div class="card" style="padding:14px;margin-top:14px;background:#FFFBEB;border-color:#FEF3C7;">
+                  <div style="font-size:13px;"><b style="color:#B45309;">⚠ Юр. дисклеймер</b><br><span style="color:#475569;">Помогатор поставляет шаблоны без юр. экспертизы. Перед использованием в проде — отдайте юристу на проверку под вашу нишу. Мы — инструмент, ответственность за соответствие 54-ФЗ / 115-ФЗ / ломбардному реестру несёт пользователь.</span></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+<div style="text-align:center;color:#64748B;font-size:13px;padding:24px;">Конец демо · v0.3 · 2026-05-24<br>Скажи что менять — переделаю экраны.</div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>
